@@ -10,10 +10,10 @@ stmt_seq: stmt NEWLINE stmt_seq
 
 stmt: print_stmt ;
 
-print_stmt: PRINT '"' (ID)* '"';
+print_stmt: PRINT '"' ID '"';
 
 PRINT: 'print'; 
 ID : [a-zA-Z]+;
 INT: [0-9]+;
-NEWLINE: '\r'? '\n';
+NEWLINE: ['\n']+;
 WS : [ \t]+ -> skip;
