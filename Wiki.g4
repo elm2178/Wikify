@@ -7,32 +7,27 @@ stmt_seq: stmt NEWLINE stmt_seq
         | /* epsilon */ 
         ;
 
-stmt: print_stmt 
-    | assignment
+stmt: print_stmt                    # PrintStmt
+    | ID '=' expr                   # Assign
     ;
 
-assignment: ID '=' expr;
-
-expr: expr ADD term
-    | expr SUB term
-    | term
+expr: expr op=(ADD|SUB) term      # AddSub
+    | term                          # TermExpr 
     ;
 
-term: term MUL fact
-    | term DIV fact
-    | fact
+term: term op=(MUL|DIV) fact        # MulDiv
+    | fact                          # FactTerm
     ;
 
-fact: LPAREN expr RPAREN
-    | number 
+fact: '('expr')'                    # Parens
+    | INT                           # Integer
+    | ID                            # Var
     ;
 
-number: INT;
+print_stmt: PRINT STRING            # PrintString
+    | PRINT ID                      # PrintId
+    ;
 
-print_stmt: PRINT STRING;
-
-RPAREN: ')';
-LPAREN: '(';
 MUL: '*'; 
 ADD: '+';
 DIV: '/';
@@ -40,6 +35,6 @@ SUB: '-';
 PRINT: 'print'; 
 ID : [a-zA-Z]+;
 INT: [0-9]+;
-STRING: '"'(~["\\\r\n])+'"';
+STRING: '"'( '\\''"' |~[\r\n])+'"';
 NEWLINE: ['\n']+;
 WS : [ \t]+ -> skip;

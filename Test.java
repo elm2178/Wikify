@@ -18,10 +18,8 @@ public class Test {
         //begin parsing at init rule
         ParseTree tree = parser.prog();
 
-        //Create a gneric parse tree walker
-        ParseTreeWalker walker = new ParseTreeWalker();
-
-        walker.walk(new WikiToJava(), tree);
-        System.out.println();
+        //Create Eval Visitor
+        EvalVisitor eval = new EvalVisitor();
+        eval.visit(tree);
     }
 }
