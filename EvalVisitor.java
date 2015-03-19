@@ -1,16 +1,20 @@
+package wikify;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class EvalVisitor extends WikiBaseVisitor<Integer> {
     /** "memory" for our calculator; variable/value pairs go here */
-    Map<String, Integer> memory = new HashMap<String, Integer>();
+    Map<String, DataType> memory = new HashMap<String, DataType>();
 
     /** ID '=' expr NEWLINE */
     @Override
     public Integer visitAssign(WikiParser.AssignContext ctx) {
         String id = ctx.ID().getText();  // id is left-hand side of '='
         int value = visit(ctx.expr());   // compute value of expression on right
-        memory.put(id, value);           // store it in our memory
+
+        DataType dt = new DataType(value);
+        memory.put(id, dt);           // store it in our memory
         return value;
     }
 
@@ -36,10 +40,15 @@ public class EvalVisitor extends WikiBaseVisitor<Integer> {
     public Integer visitVar(WikiParser.VarContext ctx) {
         String id = ctx.ID().getText();
 
-        if ( memory.containsKey(id) ) 
-            return memory.get(id);
+        if ( memory.containsKey(id) ) {
+            DataType dt = memory.get(id);
 
-        return 0; //this should be an error
+            if(dt.getType() == DataType.INT)
+                return dt.getInt();
+        }
+        
+        //some kind of error
+        return 0; 
     }
 
     /** term op=(MUL|DIV) fact */
@@ -63,11 +72,14 @@ public class EvalVisitor extends WikiBaseVisitor<Integer> {
     @Override
     public Integer visitPrintId(WikiParser.PrintIdContext ctx) {
         String id = ctx.ID().getText();
-        int value;
+        DataType dt;
 
         if ( memory.containsKey(id) ) {
-            value = memory.get(id);
-            System.out.print(value);
+            dt = memory.get(id);
+            if(dt.getType() == DataType.STR)
+                System.out.println(dt.getString());
+            if(dt.getType() == DataType.INT)
+                System.out.println(dt.getInt());
         }
 
         return 0;

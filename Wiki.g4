@@ -1,5 +1,9 @@
 grammar Wiki; 
-/*The Start rule */
+@header {
+    package wikify;
+}
+
+/* The Start Production */
 prog: stmt_seq ; 
 
 stmt_seq: stmt NEWLINE stmt_seq
@@ -9,9 +13,18 @@ stmt_seq: stmt NEWLINE stmt_seq
 
 stmt: print_stmt                    # PrintStmt
     | ID '=' expr                   # Assign
+    | ID '=' str_expr               # StrAssign
     ;
+/* String Expressions       */
+str_expr: STRING '+' str_expr         # ConcatStr
+    | ID '+' str_expr                 # ConcatId
+    | STRING                        # StrLit
+    | ID                            # IdString
+    ;
+/****************************/
 
-expr: expr op=(ADD|SUB) term      # AddSub
+/* Arithmetic Expressions   */
+expr: expr op=(ADD|SUB) term        # AddSub
     | term                          # TermExpr 
     ;
 
@@ -23,10 +36,13 @@ fact: '('expr')'                    # Parens
     | INT                           # Integer
     | ID                            # Var
     ;
+/****************************/
 
+/*Print Stmt                */
 print_stmt: PRINT STRING            # PrintString
     | PRINT ID                      # PrintId
     ;
+/***************************/
 
 MUL: '*'; 
 ADD: '+';
