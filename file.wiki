@@ -1,7 +1,12 @@
+//int assignment test
 a = 5 + 5
 b = 5 * 5
-print a
+//print expr test
+print a + b
 print "\n"
 print b
 print "\n"
-
+//print str_expr test
+eric = "my_name"
+print eric + " hello" 
+print "\n"

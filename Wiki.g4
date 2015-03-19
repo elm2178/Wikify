@@ -8,10 +8,13 @@ stmt_seq: stmt NEWLINE stmt_seq
         | /* epsilon */ 
         ;
 
-stmt: print_stmt                    # PrintStmt
-    | ID '=' expr                   # Assign
+stmt: print_stmt                    # PrintStmt 
+    | ID '=' expr                   # IntAssign
     | ID '=' str_expr               # StrAssign
+    | COMMENT                       # Comment
+    | funct                         # Funtion
     ;
+
 /* String Expressions       */
 str_expr: STRING '+' str_expr       # ConcatStr
     | ID '+' str_expr               # ConcatId
@@ -36,8 +39,8 @@ fact: '('expr')'                    # Parens
 /****************************/
 
 /*Print Stmt                */
-print_stmt: PRINT STRING            # PrintString
-    | PRINT ID                      # PrintId
+print_stmt: PRINT str_expr          # PrintStrExpr
+    | PRINT expr                    # PrintExpr
     ;
 /***************************/
 
@@ -48,6 +51,7 @@ SUB: '-';
 PRINT: 'print'; 
 ID : [a-zA-Z]+;
 INT: [0-9]+;
+COMMENT: '/''/'(~['\n'])* ;
 STRING: '"'( '\\''"' |~[\r\n])+'"';
 NEWLINE: ['\n']+;
 WS : [ \t]+ -> skip;
