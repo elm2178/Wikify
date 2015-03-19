@@ -1,45 +1,31 @@
-package wikify;
-
-public class DataType {
+public class DataType<T> {
     /* List of Different Types */
     public static final int UNDEFINED = -1;
     public static final int INT = 0;
     public static final int STR = 1;
     /**************************/
 
-    private int type;
-    private String str;
-    private int value;
+    private T data;
 
     public DataType() {
-        type = UNDEFINED; 
-        str = null;
-        value = 0;
+        data = null;
     }
 
-    public DataType(String str) {
-        type = STR;
-        this.str = str;
-        value = 0;
+    public DataType(T data) {
+        this.data = data;
     }
 
-    public DataType(int value) {
-        type = INT;
-        str = null;
-        this.value = value;
-
-    }
-        
     public int getType() {
-        return type;
+        if(data.getClass() == Integer.class)
+            return INT;
+        if(data.getClass() == String.class)
+            return STR;
+
+        return UNDEFINED;
     }
 
-    public String getString() {
-        return str;
-    }
-    
-    public int getInt() {
-        return value;
+    public T getContent() {
+        return data;
     }
 }
 

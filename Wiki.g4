@@ -1,7 +1,4 @@
 grammar Wiki; 
-@header {
-    package wikify;
-}
 
 /* The Start Production */
 prog: stmt_seq ; 
@@ -16,8 +13,8 @@ stmt: print_stmt                    # PrintStmt
     | ID '=' str_expr               # StrAssign
     ;
 /* String Expressions       */
-str_expr: STRING '+' str_expr         # ConcatStr
-    | ID '+' str_expr                 # ConcatId
+str_expr: STRING '+' str_expr       # ConcatStr
+    | ID '+' str_expr               # ConcatId
     | STRING                        # StrLit
     | ID                            # IdString
     ;

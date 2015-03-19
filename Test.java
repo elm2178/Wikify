@@ -1,5 +1,3 @@
-package wikify;
-
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -20,8 +18,12 @@ public class Test {
         //begin parsing at init rule
         ParseTree tree = parser.prog();
 
-        //Create Eval Visitor
-        EvalVisitor eval = new EvalVisitor();
-        eval.visit(tree);
+        //create a parse tree walker
+        ParseTreeWalker walker = new ParseTreeWalker();
+
+        //Walk the tree
+        walker.walk(new wikiToJava(), tree);
+
+        System.out.println();
     }
 }
