@@ -1,12 +1,20 @@
 import java.io.*;
 
 public class wikiToJava extends WikiBaseListener {
+    int main_flag = 0;
 
     /* creates the java test class with main method */
     @Override
     public void enterProg(WikiParser.ProgContext ctx) {
-        System.out.print("public class TestWiki {\n" 
-                +"public static void main(String[] args) {\n");
+        System.out.println("public class TestWiki {");
+    }
+
+    public void enterStmt_seq(WikiParser.Stmt_seqContext ctx) {
+        if(main_flag == 0)
+        {
+            System.out.println("public static void main(String[] args) {");
+            main_flag = 1;
+        }
     }
 
     /* Closes Parenthesis at exit prog */
@@ -14,6 +22,41 @@ public class wikiToJava extends WikiBaseListener {
     public void exitProg(WikiParser.ProgContext ctx) {
         System.out.print("}\n}");
     }
+
+    public void enterFuncDef(WikiParser.FuncDefContext ctx) {
+        String buffer = "public "; 
+        if(ctx.ID(0).getText().compareTo("string") == 0)
+            buffer = buffer.concat(" String");
+        else
+            buffer = buffer + ctx.ID(0).getText();
+
+        buffer = buffer+" "+ctx.ID(1).getText()+"("; 
+        System.out.print(buffer);
+    }
+
+    public void enterArgs(WikiParser.ArgsContext ctx) {
+        String buffer = "";
+        if(ctx.ID(0) != null)
+            buffer += ctx.ID(0).getText() + " " + ctx.ID(1).getText();
+
+        if(ctx.args() != null)
+            buffer += ", ";
+        else
+            buffer += ") {\n";
+
+        System.out.print(buffer);
+    }
+
+    public void enterRetExpr(WikiParser.RetExprContext ctx) {
+        System.out.println("return " 
+                + ctx.expr().getText() 
+                + ";");
+    }
+
+    public void exitFuncDef(WikiParser.FuncDefContext ctx) {
+        System.out.println("} ");
+    }
+
 
     /*do nothing*/
     @Override
@@ -26,24 +69,23 @@ public class wikiToJava extends WikiBaseListener {
     public void exitPrintStmt(WikiParser.PrintStmtContext ctx) {
     }
 
-    /* Print Java Int Assignment */
+    /* Print Java Assignment */
     @Override
     public void enterIntAssign(WikiParser.IntAssignContext ctx) {
         System.out.println("int " 
-                + ctx.ID().getText() 
+                + ctx.ID(1).getText() 
                 + " = " 
                 + ctx.expr().getText() 
                 + ";"); 
     }
-
-    /* Print Java String Assignment */
-    public void enterStrAssign(WikiParser.StrAssignContext ctx) {
+    public void enterStrAssign(WikiParser.StrAssignContext ctx) { 
         System.out.println("String " 
-                + ctx.ID().getText()
-                + " = "
-                + ctx.str_expr().getText()
-                + ";");
+                + ctx.ID(1).getText() 
+                + " = " 
+                + ctx.str_expr().getText() 
+                + ";"); 
     }
+
 
     /*
     public void enterPrintString(WikiParser.PrintStringContext ctx) {
@@ -65,10 +107,6 @@ public class wikiToJava extends WikiBaseListener {
         System.out.println("System.out.print("
                 + ctx.str_expr().getText()
                 + ");");
-    }
-
-    public void enterComment(WikiParser.CommentContext ctx) {
-        System.out.println(ctx.COMMENT().getText());
     }
 
     //Note I wrote this because java's replaceAll would not recognize \\n

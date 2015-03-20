@@ -1,19 +1,40 @@
 grammar Wiki; 
 
 /* The Start Production */
-prog: stmt_seq ; 
+prog: func_seq NEWLINE* stmt_seq ;
 
 stmt_seq: stmt NEWLINE stmt_seq
-        | stmt
+        | stmt EOF
+        | /* epsilon */ 
+        ;
+        
+func_seq: func NEWLINE func_seq
+        | func 
         | /* epsilon */ 
         ;
 
 stmt: print_stmt                    # PrintStmt 
-    | ID '=' expr                   # IntAssign
-    | ID '=' str_expr               # StrAssign
-    | COMMENT                       # Comment
-    | funct                         # Funtion
+    | ID ID '=' expr                # IntAssign
+    | ID ID '=' str_expr            # StrAssign
     ;
+
+func: FUNC ID ID '('args')' NEWLINE func_stmt ret_stmt ENDFUNC # FuncDef
+    ;
+
+func_stmt: stmt NEWLINE func_stmt   # FuncStmt
+        | /* epsilon */             # NoFunctStmt 
+        ;
+
+
+ret_stmt: RETURN expr NEWLINE               # RetExpr
+    | RETURN str_expr NEWLINE               # RetStr
+    | /* epsilon */                         # NoRet
+    ; 
+
+args: ID ID ',' args 
+    | ID ID 
+    | /* epsilon */
+    ; 
 
 /* String Expressions       */
 str_expr: STRING '+' str_expr       # ConcatStr
@@ -44,14 +65,18 @@ print_stmt: PRINT str_expr          # PrintStrExpr
     ;
 /***************************/
 
-MUL: '*'; 
+MUL: '*';
 ADD: '+';
 DIV: '/';
 SUB: '-';
-PRINT: 'print'; 
-ID : [a-zA-Z]+;
+PRINT: 'print';
+FUNC: 'func';
+ENDFUNC: 'endfunc';
+RETURN: 'return';
+ID : [a-zA-Z][a-zA-Z0-9]*;
 INT: [0-9]+;
-COMMENT: '/''/'(~['\n'])* ;
+COMMENT: '/''/'(~['\n'])*['\n'] -> skip;
+LCOM: '/''*'(~[*/])*'*''/' -> skip; 
 STRING: '"'( '\\''"' |~[\r\n])+'"';
 NEWLINE: ['\n']+;
 WS : [ \t]+ -> skip;

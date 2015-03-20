@@ -1,12 +1,16 @@
+func int add(int a ,int b) 
+        return a + b
+endfunc
+/* hello */
 //int assignment test
-a = 5 + 5
-b = 5 * 5
-//print expr test
+int a = 5 + 5
+int b = 5 * 5
+//int assignment test
 print a + b
 print "\n"
 print b
+//int assignment test
 print "\n"
-//print str_expr test
-eric = "my_name"
+string eric = "my_name"
 print eric + " hello" 
 print "\n"
