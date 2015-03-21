@@ -1,12 +1,25 @@
 //comment test
+//func int test
 func int add(int a ,int b) 
         return a + b
 endfunc
+
 //comment test
+//multiple func test
 func int sub(int c, int d)
         return c - d
 endfunc
 
+//void func test
+func println(string word)
+        print word + "\n"
+endfunc
+//func overloading test
+func println(int word)
+        print word + "\n"
+endfunc
+
+//func string test
 func string strcat(string pre, string suf)
         return pre + suf
 endfunc
@@ -19,18 +32,14 @@ int b = 5 * 5
 //print test
 print a
 print "\n"
-print b
+println(b)
 
-//comment test
-print "\n"
-
-//string literal test
+//string literal and func test
 string name = "eric"
 string word = "hello"
-print word + name
-strcat(word, name)
+string words = strcat(word, name)
+print words + "\n"
 
-print "\n"
 //function test
 b = add(a, b)
 print b
@@ -44,4 +53,10 @@ print "\n"
 //boolean test
 bool truebool = true
 print truebool
+print "\n"
+
+//boolean expression test
+truebool = true || false
+print truebool
+print true || false
 print "\n"

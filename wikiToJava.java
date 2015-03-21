@@ -25,7 +25,10 @@ public class wikiToJava extends WikiBaseListener {
 
     public void enterFuncDef(WikiParser.FuncDefContext ctx) {
         String buffer = "public static "; 
-        buffer += matchJava(ctx.type().getText());
+        if(ctx.type() == null)
+            buffer += "void ";
+        else
+            buffer += matchJava(ctx.type().getText());
 
         buffer = buffer+ctx.ID().getText()+"("; 
         System.out.print(buffer);
@@ -87,6 +90,18 @@ public class wikiToJava extends WikiBaseListener {
         System.out.println(");");
     }
 
+    public void enterFuncDecAssign(WikiParser.FuncDecAssignContext ctx) {
+        System.out.println(matchJava(ctx.type().getText())
+                + ctx.ID(0).getText()
+                + " = "
+                + ctx.ID(1).getText()
+                + "( ");
+    }
+
+    public void exitFuncDecAssign(WikiParser.FuncDecAssignContext ctx) {
+        System.out.println(");");
+    }
+
     public void enterFCall(WikiParser.FCallContext ctx) {
         System.out.print(ctx.ID().getText() + " ( ");
     }
@@ -97,45 +112,24 @@ public class wikiToJava extends WikiBaseListener {
 
     /* Print Java Assignment */
     @Override
-    public void enterIntAssign(WikiParser.IntAssignContext ctx) {
-        System.out.println("int " 
+    public void enterDecAssign(WikiParser.DecAssignContext ctx) {
+        System.out.println(matchJava(ctx.type().getText())
                 + ctx.ID().getText() 
                 + " = " 
                 + ctx.expr().getText() 
                 + ";"); 
     }
-
-    public void enterBoolAssign(WikiParser.BoolAssignContext ctx) {
-        System.out.println("boolean " 
-                + ctx.ID().getText() 
+    public void enterAssign(WikiParser.AssignContext ctx) {
+        System.out.println(ctx.ID().getText() 
                 + " = " 
-                + ctx.bool_expr().getText() 
+                + ctx.expr().getText() 
                 + ";"); 
     }
-
-    public void enterStrAssign(WikiParser.StrAssignContext ctx) { 
-        System.out.println("String " 
-                + ctx.ID().getText() 
-                + " = " 
-                + ctx.str_expr().getText() 
-                + ";"); 
-    }
-
-    public void enterPrintExpr(WikiParser.PrintExprContext ctx) {
+ 
+    public void enterPrint(WikiParser.PrintContext ctx) {
         System.out.println("System.out.print("
                 + ctx.expr().getText()
                 + ");");
-    }
-
-    public void enterPrintStrExpr(WikiParser.PrintStrExprContext ctx) {
-        System.out.println("System.out.print("
-                + ctx.str_expr().getText()
-                + ");");
-    }
-    public void enterPrintBoolExpr(WikiParser.PrintBoolExprContext ctx) {
-        System.out.println("if(" + ctx.bool_expr().getText() + ')');
-        System.out.println("\tSystem.out.println(\"true\");");
-        System.out.println("else\n\tSystem.out.println(\"false\");");
     }
 
     private String matchJava(String type) {
@@ -146,7 +140,6 @@ public class wikiToJava extends WikiBaseListener {
             result = "boolean ";
         if(type.compareTo("int") == 0)
             result = "int ";
-
 
         return result;
     }

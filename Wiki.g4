@@ -1,6 +1,7 @@
 grammar Wiki; 
 
 /* The Start Production */
+/* at some point I would like to add import statements */
 prog: func_seq NEWLINE* stmt_seq ;
 
 stmt_seq: stmt NEWLINE stmt_seq
@@ -13,16 +14,23 @@ func_seq: func NEWLINE func_seq
         | /* epsilon */ 
         ;
 
-stmt: print_stmt                    # PrintStmt 
-    | INT ID '=' expr               # IntAssign
-    | STRING ID '=' str_expr        # StrAssign
-    | BOOL ID '=' bool_expr         # BoolAssign
+stmt: PRINT expr                    # Print
+    | type ID                       # Declare
+    | type ID '=' expr              # DecAssign 
+    | ID '=' expr                   # Assign
     | ID '=' ID '(' params ')'      # FuncAssign
+    | type ID '=' ID '(' params ')' # FuncDecAssign
     | ID '(' params ')'             # FuncCall
     ;
 
+/* maybe a funccall should be an expression, not sure yet */
+expr: int_expr
+    | bool_expr
+    | str_expr
+    ;
+
 /* Function Definition *******/
-func: FUNC type ID '('args')' NEWLINE func_stmt ret_stmt ENDFUNC # FuncDef
+func: FUNC (type|) ID '('args')' NEWLINE func_stmt ret_stmt ENDFUNC # FuncDef
     ;
 
 func_stmt: stmt NEWLINE func_stmt   # FuncStmt
@@ -46,7 +54,6 @@ args: type ID ',' args
 
 /* Return Statements ********/
 ret_stmt: RETURN expr NEWLINE               # RetExpr
-    | RETURN str_expr NEWLINE               # RetStr
     | /* epsilon */                         # NoRet
     ; 
 /****************************/
@@ -75,7 +82,7 @@ str_expr: STRLIT '+' str_expr       # ConcatStr
 /****************************/
 
 /* Arithmetic Expressions ***/
-expr: expr op=(ADD|SUB) term        # AddSub
+int_expr: int_expr op=(ADD|SUB) term# AddSub
     | term                          # TermExpr 
     ;
 
@@ -89,13 +96,6 @@ fact: '('expr')'
     ;
 /****************************/
 
-/* Print Stmt ***************/
-print_stmt: PRINT str_expr          # PrintStrExpr
-    | PRINT expr                    # PrintExpr
-    | PRINT bool_expr               # PrintBoolExpr
-    ;
-/****************************/
-
 type: INT
     | STRING
     | BOOL 
@@ -105,6 +105,11 @@ MUL: '*';
 ADD: '+';
 DIV: '/';
 SUB: '-';
+GT: '>';
+LT: '<';
+GTE:'>=';
+LTE: '<=';
+EQ: '==';
 /* Keywords in Wikify *******/
 INT: 'int';
 STRING: 'string';
