@@ -2,11 +2,11 @@ import java.io.*;
 
 public class wikiToJava extends WikiBaseListener {
     int main_flag = 0;
-
+    
     /* creates the java test class with main method */
     @Override
     public void enterProg(WikiParser.ProgContext ctx) {
-        System.out.println("public class TestWiki {");
+        System.out.print("public class TestWiki { \n");
     }
 
     public void enterStmt_seq(WikiParser.Stmt_seqContext ctx) {
@@ -24,20 +24,17 @@ public class wikiToJava extends WikiBaseListener {
     }
 
     public void enterFuncDef(WikiParser.FuncDefContext ctx) {
-        String buffer = "public "; 
-        if(ctx.ID(0).getText().compareTo("string") == 0)
-            buffer = buffer.concat(" String");
-        else
-            buffer = buffer + ctx.ID(0).getText();
+        String buffer = "public static "; 
+        buffer += matchJava(ctx.type().getText());
 
-        buffer = buffer+" "+ctx.ID(1).getText()+"("; 
+        buffer = buffer+ctx.ID().getText()+"("; 
         System.out.print(buffer);
     }
 
     public void enterArgs(WikiParser.ArgsContext ctx) {
         String buffer = "";
-        if(ctx.ID(0) != null)
-            buffer += ctx.ID(0).getText() + " " + ctx.ID(1).getText();
+        if(ctx.type() != null)
+            buffer += matchJava(ctx.type().getText()) + " " + ctx.ID().getText();
 
         if(ctx.args() != null)
             buffer += ", ";
@@ -57,45 +54,72 @@ public class wikiToJava extends WikiBaseListener {
         System.out.println("} ");
     }
 
-
-    /*do nothing*/
-    @Override
-    public void enterPrintStmt(WikiParser.PrintStmtContext ctx) {
+    public void enterFuncCall(WikiParser.FuncCallContext ctx) {
+        System.out.print(ctx.ID().getText() 
+                + " ( "); 
     }
 
+    public void exitFuncCall(WikiParser.FuncCallContext ctx) {
+        System.out.println(");");
+    }
 
-    /*do nothing*/
-    @Override
-    public void exitPrintStmt(WikiParser.PrintStmtContext ctx) {
+    public void enterParams(WikiParser.ParamsContext ctx) {
+         String buffer = "";
+        if(ctx.expr() != null)
+            buffer += ctx.expr().getText();
+        if(ctx.str_expr() != null) 
+            buffer += ctx.str_expr().getText();
+
+        if(ctx.params() != null)
+            buffer += ", ";
+
+        System.out.print(buffer);
+    }
+
+    public void enterFuncAssign(WikiParser.FuncAssignContext ctx) {
+        System.out.println(ctx.ID(0).getText()
+                + " = "
+                + ctx.ID(1).getText()
+                + "( ");
+    }
+
+    public void exitFuncAssign(WikiParser.FuncAssignContext ctx) {
+        System.out.println(");");
+    }
+
+    public void enterFCall(WikiParser.FCallContext ctx) {
+        System.out.print(ctx.ID().getText() + " ( ");
+    }
+
+    public void exitFCall(WikiParser.FCallContext ctx) {
+        System.out.print(");");
     }
 
     /* Print Java Assignment */
     @Override
     public void enterIntAssign(WikiParser.IntAssignContext ctx) {
         System.out.println("int " 
-                + ctx.ID(1).getText() 
+                + ctx.ID().getText() 
                 + " = " 
                 + ctx.expr().getText() 
                 + ";"); 
     }
+
+    public void enterBoolAssign(WikiParser.BoolAssignContext ctx) {
+        System.out.println("boolean " 
+                + ctx.ID().getText() 
+                + " = " 
+                + ctx.bool_expr().getText() 
+                + ";"); 
+    }
+
     public void enterStrAssign(WikiParser.StrAssignContext ctx) { 
         System.out.println("String " 
-                + ctx.ID(1).getText() 
+                + ctx.ID().getText() 
                 + " = " 
                 + ctx.str_expr().getText() 
                 + ";"); 
     }
-
-
-    /*
-    public void enterPrintString(WikiParser.PrintStringContext ctx) {
-        System.out.print("System.out.print(\"");
-        String word = ctx.STRING().getText();
-        word = word.substring(1, word.length() - 1);
-        System.out.print(word);
-        System.out.print("\");\n");
-    }
-    */
 
     public void enterPrintExpr(WikiParser.PrintExprContext ctx) {
         System.out.println("System.out.print("
@@ -107,6 +131,24 @@ public class wikiToJava extends WikiBaseListener {
         System.out.println("System.out.print("
                 + ctx.str_expr().getText()
                 + ");");
+    }
+    public void enterPrintBoolExpr(WikiParser.PrintBoolExprContext ctx) {
+        System.out.println("if(" + ctx.bool_expr().getText() + ')');
+        System.out.println("\tSystem.out.println(\"true\");");
+        System.out.println("else\n\tSystem.out.println(\"false\");");
+    }
+
+    private String matchJava(String type) {
+        String result = "undefined";
+        if(type.compareTo("string") == 0)
+            result = "String ";
+        if(type.compareTo("bool") == 0)
+            result = "boolean ";
+        if(type.compareTo("int") == 0)
+            result = "int ";
+
+
+        return result;
     }
 
     //Note I wrote this because java's replaceAll would not recognize \\n

@@ -9,42 +9,72 @@ stmt_seq: stmt NEWLINE stmt_seq
         ;
         
 func_seq: func NEWLINE func_seq
-        | func 
+        | func  
         | /* epsilon */ 
         ;
 
 stmt: print_stmt                    # PrintStmt 
-    | ID ID '=' expr                # IntAssign
-    | ID ID '=' str_expr            # StrAssign
+    | INT ID '=' expr               # IntAssign
+    | STRING ID '=' str_expr        # StrAssign
+    | BOOL ID '=' bool_expr         # BoolAssign
+    | ID '=' ID '(' params ')'      # FuncAssign
+    | ID '(' params ')'             # FuncCall
     ;
 
-func: FUNC ID ID '('args')' NEWLINE func_stmt ret_stmt ENDFUNC # FuncDef
+/* Function Definition *******/
+func: FUNC type ID '('args')' NEWLINE func_stmt ret_stmt ENDFUNC # FuncDef
     ;
 
 func_stmt: stmt NEWLINE func_stmt   # FuncStmt
         | /* epsilon */             # NoFunctStmt 
+        | ID '(' params ')'         # FCall
         ;
 
+/* Function Arguments ********/
+params: expr ',' params            
+    | str_expr ',' params         
+    | expr
+    | str_expr
+    | /* epsilon */   
+    ;
 
+args: type ID ',' args 
+    | type ID 
+    | /* epsilon */
+    ; 
+/****************************/
+
+/* Return Statements ********/
 ret_stmt: RETURN expr NEWLINE               # RetExpr
     | RETURN str_expr NEWLINE               # RetStr
     | /* epsilon */                         # NoRet
     ; 
+/****************************/
 
-args: ID ID ',' args 
-    | ID ID 
-    | /* epsilon */
-    ; 
+/* Boolean Expressions ******/
+bool_expr: bool_expr '||' bool_term
+    | bool_term
+    ;
+bool_term: bool_term '&&' bool_fact
+    | bool_fact
+    ;
+bool_fact: '(' bool_expr ')'
+    | TRUE
+    | FALSE
+    | ID                          
+    | '~' bool_fact                
+    ;
+/****************************/
 
-/* String Expressions       */
-str_expr: STRING '+' str_expr       # ConcatStr
+/* String Expressions *******/
+str_expr: STRLIT '+' str_expr       # ConcatStr
     | ID '+' str_expr               # ConcatId
-    | STRING                        # StrLit
+    | STRLIT                        # StrLit
     | ID                            # IdString
     ;
 /****************************/
 
-/* Arithmetic Expressions   */
+/* Arithmetic Expressions ***/
 expr: expr op=(ADD|SUB) term        # AddSub
     | term                          # TermExpr 
     ;
@@ -53,30 +83,44 @@ term: term op=(MUL|DIV) fact        # MulDiv
     | fact                          # FactTerm
     ;
 
-fact: '('expr')'                    # Parens
-    | INT                           # Integer
-    | ID                            # Var
+fact: '('expr')'
+    | NUM
+    | ID 
     ;
 /****************************/
 
-/*Print Stmt                */
+/* Print Stmt ***************/
 print_stmt: PRINT str_expr          # PrintStrExpr
     | PRINT expr                    # PrintExpr
+    | PRINT bool_expr               # PrintBoolExpr
     ;
-/***************************/
+/****************************/
+
+type: INT
+    | STRING
+    | BOOL 
+    ; 
 
 MUL: '*';
 ADD: '+';
 DIV: '/';
 SUB: '-';
+/* Keywords in Wikify *******/
+INT: 'int';
+STRING: 'string';
+BOOL: 'bool';
+TRUE: 'true';
+FALSE: 'false';
 PRINT: 'print';
 FUNC: 'func';
 ENDFUNC: 'endfunc';
 RETURN: 'return';
+IF: 'if';
+/****************************/
 ID : [a-zA-Z][a-zA-Z0-9]*;
-INT: [0-9]+;
+NUM: [0-9]+;
 COMMENT: '/''/'(~['\n'])*['\n'] -> skip;
 LCOM: '/''*'(~[*/])*'*''/' -> skip; 
-STRING: '"'( '\\''"' |~[\r\n])+'"';
+STRLIT: '"'( '\\''"' |~[\r\n])+'"';
 NEWLINE: ['\n']+;
 WS : [ \t]+ -> skip;

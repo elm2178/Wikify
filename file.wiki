@@ -1,16 +1,47 @@
+//comment test
 func int add(int a ,int b) 
         return a + b
 endfunc
+//comment test
+func int sub(int c, int d)
+        return c - d
+endfunc
+
+func string strcat(string pre, string suf)
+        return pre + suf
+endfunc
+
 /* hello */
 //int assignment test
 int a = 5 + 5
 int b = 5 * 5
-//int assignment test
-print a + b
+
+//print test
+print a
 print "\n"
 print b
-//int assignment test
+
+//comment test
 print "\n"
-string eric = "my_name"
-print eric + " hello" 
+
+//string literal test
+string name = "eric"
+string word = "hello"
+print word + name
+strcat(word, name)
+
+print "\n"
+//function test
+b = add(a, b)
+print b
+print "\n"
+
+//function test
+b = sub(b, a)
+print b
+print "\n"
+
+//boolean test
+bool truebool = true
+print truebool
 print "\n"
