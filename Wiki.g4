@@ -2,25 +2,46 @@ grammar Wiki;
 
 /* The Start Production */
 /* at some point I would like to add import statements */
-prog: func_seq NEWLINE* stmt_seq ;
+prog: func_seq NL* stmt_seq ;
 
-stmt_seq: stmt NEWLINE stmt_seq
+stmt_seq: stmt NL stmt_seq
         | stmt EOF
         | /* epsilon */ 
         ;
         
-func_seq: func NEWLINE func_seq
+func_seq: func NL func_seq
         | func  
         | /* epsilon */ 
         ;
 
-stmt: PRINT expr                    # Print
+stmt: PRINT '(' expr ')'            # Print
     | type ID                       # Declare
     | type ID '=' expr              # DecAssign 
     | ID '=' expr                   # Assign
-    | ID '=' ID '(' params ')'      # FuncAssign
-    | type ID '=' ID '(' params ')' # FuncDecAssign
-    | ID '(' params ')'             # FuncCall
+    | func_action                   # FuncAct
+    | if_stmt                       # IfStmt
+    | while_stmt                    # WhileStmt
+    | for_stmt                      # ForStmt
+    ;
+
+/* Loop Types ***************/
+for_stmt: FOR '('stmt ';'expr';'stmt')' NL stmt_seq END;
+
+while_stmt: WHILE '('expr')' NL stmt_seq END;
+
+/*****************************/
+
+/* if statements *************/
+if_stmt: IF '('expr')' NL stmt_seq else_stmt END;
+
+else_stmt: ELSE NL stmt_seq 
+    | /* epsilon */
+    ;
+/*****************************/
+
+func_action: ID '=' ID '(' params ')'# FuncAssign
+    | type ID '=' ID '(' params ')'  # FuncDecAssign
+    | ID '(' params ')'              # FuncCall
     ;
 
 /* maybe a funccall should be an expression, not sure yet */
@@ -30,10 +51,10 @@ expr: int_expr
     ;
 
 /* Function Definition *******/
-func: FUNC (type|) ID '('args')' NEWLINE func_stmt ret_stmt ENDFUNC # FuncDef
+func: FUNC (type|) ID '('args')' NL func_stmt ret_stmt END # FuncDef
     ;
 
-func_stmt: stmt NEWLINE func_stmt   # FuncStmt
+func_stmt: stmt NL func_stmt        # FuncStmt
         | /* epsilon */             # NoFunctStmt 
         | ID '(' params ')'         # FCall
         ;
@@ -53,8 +74,8 @@ args: type ID ',' args
 /****************************/
 
 /* Return Statements ********/
-ret_stmt: RETURN expr NEWLINE               # RetExpr
-    | /* epsilon */                         # NoRet
+ret_stmt: RETURN expr NL                        # RetExpr
+    | /* epsilon */                             # NoRet
     ; 
 /****************************/
 
@@ -69,8 +90,10 @@ bool_fact: '(' bool_expr ')'
     | TRUE
     | FALSE
     | ID                          
-    | '~' bool_fact                
+    | '!'bool_fact                
+    | cond
     ;
+cond: int_expr (LT|GT|LTE|GTE|EQ) int_expr;
 /****************************/
 
 /* String Expressions *******/
@@ -118,14 +141,17 @@ TRUE: 'true';
 FALSE: 'false';
 PRINT: 'print';
 FUNC: 'func';
-ENDFUNC: 'endfunc';
+END: 'end';
 RETURN: 'return';
 IF: 'if';
+ELSE: 'else';
+WHILE: 'while';
+FOR: 'for';
 /****************************/
 ID : [a-zA-Z][a-zA-Z0-9]*;
 NUM: [0-9]+;
 COMMENT: '/''/'(~['\n'])*['\n'] -> skip;
 LCOM: '/''*'(~[*/])*'*''/' -> skip; 
 STRLIT: '"'( '\\''"' |~[\r\n])+'"';
-NEWLINE: ['\n']+;
+NL: ['\n']+;
 WS : [ \t]+ -> skip;

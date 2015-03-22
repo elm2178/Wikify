@@ -1,28 +1,28 @@
 //comment test
 //func int test
-func int add(int a ,int b) 
+func int add(int a,int b) 
         return a + b
-endfunc
+end
 
 //comment test
 //multiple func test
 func int sub(int c, int d)
         return c - d
-endfunc
+end
 
 //void func test
 func println(string word)
-        print word + "\n"
-endfunc
+        print(word + "\n")
+end
 //func overloading test
 func println(int word)
-        print word + "\n"
-endfunc
+        print(word + "\n")
+end
 
 //func string test
 func string strcat(string pre, string suf)
         return pre + suf
-endfunc
+end
 
 /* hello */
 //int assignment test
@@ -30,33 +30,53 @@ int a = 5 + 5
 int b = 5 * 5
 
 //print test
-print a
-print "\n"
+print(a)
+print("\n")
 println(b)
 
 //string literal and func test
 string name = "eric"
 string word = "hello"
 string words = strcat(word, name)
-print words + "\n"
+print(words + "\n")
 
 //function test
 b = add(a, b)
-print b
-print "\n"
+print(b)
+print("\n")
 
 //function test
 b = sub(b, a)
-print b
-print "\n"
+print(b)
+print("\n")
 
 //boolean test
 bool truebool = true
-print truebool
-print "\n"
+print(truebool)
+print("\n")
 
 //boolean expression test
 truebool = true || false
-print truebool
-print true || false
-print "\n"
+print(truebool)
+print(true || false)
+print("\n")
+if(!truebool)
+        println("if statement working")
+else
+        println("else statement also working")
+end
+int i = 0
+while(i < 10)
+        if(i < 9)
+                print(i)
+        else
+                println(i)
+        end
+        i = i + 1
+end
+for(int k = 0; k < 10; k = k + 1)
+        print(k)
+        b = add(k, k)
+        print(b)
+end
+print("\n")

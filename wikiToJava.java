@@ -2,7 +2,9 @@ import java.io.*;
 
 public class wikiToJava extends WikiBaseListener {
     int main_flag = 0;
-    
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    PrintStream old = System.out; 
+
     /* creates the java test class with main method */
     @Override
     public void enterProg(WikiParser.ProgContext ctx) {
@@ -47,6 +49,7 @@ public class wikiToJava extends WikiBaseListener {
         System.out.print(buffer);
     }
 
+
     public void enterRetExpr(WikiParser.RetExprContext ctx) {
         System.out.println("return " 
                 + ctx.expr().getText() 
@@ -59,11 +62,59 @@ public class wikiToJava extends WikiBaseListener {
 
     public void enterFuncCall(WikiParser.FuncCallContext ctx) {
         System.out.print(ctx.ID().getText() 
-                + " ( "); 
+                + "( "); 
     }
 
     public void exitFuncCall(WikiParser.FuncCallContext ctx) {
         System.out.println(");");
+    }
+
+
+    //for_stmt: FOR '('stmt';'expr';'stmt')' NL stmt_seq END;
+    //for loop problems!! set for loop flag?
+    public void enterFor_stmt(WikiParser.For_stmtContext ctx) {
+        System.setOut(new PrintStream(stream));
+    }
+
+    public void exitFor_stmt(WikiParser.For_stmtContext ctx) {
+        System.out.flush();
+        String result = stream.toString();
+        System.setOut(old);
+
+        //get rid of newline and tabs in for statement
+        result = result.replaceAll("[\t\n]", "");
+        //split into an array
+        String for_args[] = result.split(";");
+
+        System.out.print("for(" + for_args[0] +";" + ctx.expr().getText()
+                + ";" + for_args[1] +") { \n");
+
+        //print out rest of statment sequence
+        int i = 2;
+        while(i < for_args.length)
+        {
+            System.out.println(for_args[i]+";");
+            i++;
+        }
+        System.out.println("}");
+    }
+
+    public void enterWhile_stmt(WikiParser.While_stmtContext ctx) {
+        System.out.println("while( " + ctx.expr().getText() + ") {");
+    }
+    public void exitWhile_stmt(WikiParser.While_stmtContext ctx) {
+        System.out.println("}");
+    }
+
+    public void enterIf_stmt(WikiParser.If_stmtContext ctx) {
+        System.out.println("if (" + ctx.expr().getText() + ") {");
+    }
+    public void enterElse_stmt(WikiParser.Else_stmtContext ctx) {
+        System.out.print("}\nelse {\n");
+    }
+
+    public void exitElse_stmt(WikiParser.Else_stmtContext ctx) {
+        System.out.println("}");
     }
 
     public void enterParams(WikiParser.ParamsContext ctx) {
@@ -80,7 +131,7 @@ public class wikiToJava extends WikiBaseListener {
     }
 
     public void enterFuncAssign(WikiParser.FuncAssignContext ctx) {
-        System.out.println(ctx.ID(0).getText()
+        System.out.print(ctx.ID(0).getText()
                 + " = "
                 + ctx.ID(1).getText()
                 + "( ");
