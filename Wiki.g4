@@ -28,10 +28,10 @@ func_seq: func NL func_seq
         ;
 
 stmt: PRINT '(' expr ')'            # Print
-    | type ID                       # Declare
-    | type ID '=' expr              # DecAssign 
-    | ID '=' expr                   # Assign
-    | (ID u=(PP|MM) | u=(PP|MM) ID) # IncDec
+    | type ident                    # Declare
+    | type ident '=' expr           # DecAssign 
+    | ident '=' expr                # Assign
+    | (ident u=(PP|MM) | u=(PP|MM) ident) # IncDec
     | func_action                   # FuncAct
     | if_stmt                       # IfStmt
     | while_stmt                    # WhileStmt
@@ -42,6 +42,9 @@ stmt: PRINT '(' expr ')'            # Print
 
 comm: LCOM
     | COMMENT
+    ;
+
+ident: ID ('['(NUM|)']')*
     ;
     
 /* Loop Types ***************/
@@ -59,19 +62,18 @@ else_stmt: ELSE NL stmt_seq
     ;
 /*****************************/
 
-func_action: ID '=' ID '(' params ')'# FuncAssign
-    | type ID '=' ID '(' params ')'  # FuncDecAssign
+func_action: ident '=' ID '(' params ')'# FuncAssign
+    | type ident '=' ID '(' params ')'  # FuncDecAssign
     | ID '(' params ')'              # FuncCall
     ;
 
 /* maybe a funccall should be an expression, not sure yet */
-expr: int_expr
-    | bool_expr
+expr: int_expr | bool_expr
     | str_expr
     ;
 
 /* Function Definition *******/
-func: FUNC (type|) ID '('args')' NL func_stmt ret_stmt END # FuncDef
+func: FUNC (type|) ID'('args')' NL func_stmt ret_stmt END # FuncDef
     ;
 
 func_stmt: stmt NL func_stmt        # FuncStmt
@@ -85,8 +87,8 @@ params: expr ',' params
     | /* epsilon */   
     ;
 
-args: type ID ',' args 
-    | type ID 
+args: type ident',' args 
+    | type ident
     | /* epsilon */
     ; 
 /****************************/
@@ -107,7 +109,7 @@ bool_term: bool_term '&&' bool_fact
 bool_fact: '(' bool_expr ')'
     | TRUE
     | FALSE
-    | ID                          
+    | ident                          
     | '!'bool_fact                
     | cond
     ;
@@ -116,9 +118,9 @@ cond: int_expr (LT|GT|LTE|GTE|EQ|NEQ) int_expr;
 
 /* String Expressions *******/
 str_expr: STRLIT '+' str_expr       # ConcatStr
-    | ID '+' str_expr               # ConcatId
+    | ident '+' str_expr            # ConcatId
     | STRLIT                        # StrLit
-    | ID                            # IdString
+    | ident                         # IdString
     ;
 /****************************/
 
@@ -133,7 +135,7 @@ term: term op=(MUL|DIV|MOD) fact    # MulDiv
 
 fact: '('expr')'
     | NUM
-    | ID 
+    | ident 
     ;
 /****************************/
 

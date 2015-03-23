@@ -26,6 +26,7 @@ end
 main()
 num a = 5 + 5
 num b = 5 * 5
+num array[]
 
 print(a)
 print("\n")

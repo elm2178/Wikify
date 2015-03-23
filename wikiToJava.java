@@ -41,7 +41,7 @@ public class wikiToJava extends WikiBaseListener {
     public void enterArgs(WikiParser.ArgsContext ctx) {
         String buffer = "";
         if(ctx.type() != null)
-            buffer += matchJava(ctx.type().getText()) + " " + ctx.ID().getText();
+            buffer += matchJava(ctx.type().getText()) + " " + ctx.ident().getText();
 
         if(ctx.args() != null)
             buffer += ", ";
@@ -135,9 +135,9 @@ public class wikiToJava extends WikiBaseListener {
     }
 
     public void enterFuncAssign(WikiParser.FuncAssignContext ctx) {
-        System.out.print(ctx.ID(0).getText()
+        System.out.print(ctx.ident().getText()
                 + " = "
-                + ctx.ID(1).getText()
+                + ctx.ID().getText()
                 + "( ");
     }
 
@@ -147,9 +147,9 @@ public class wikiToJava extends WikiBaseListener {
 
     public void enterFuncDecAssign(WikiParser.FuncDecAssignContext ctx) {
         System.out.println(matchJava(ctx.type().getText())
-                + ctx.ID(0).getText()
+                + ctx.ident().getText()
                 + " = "
-                + ctx.ID(1).getText()
+                + ctx.ID().getText()
                 + "( ");
     }
 
@@ -170,44 +170,47 @@ public class wikiToJava extends WikiBaseListener {
     public void enterDecAssign(WikiParser.DecAssignContext ctx) {
         if(main_flag == 0) {
             System.out.println("static " + matchJava(ctx.type().getText())
-                + ctx.ID().getText() 
+                + ctx.ident().getText() 
                 + " = " 
                 + ctx.expr().getText() 
                 + ";"); 
             return;
         }
+
         System.out.println(matchJava(ctx.type().getText())
-                + ctx.ID().getText() 
+                + ctx.ident().getText() 
                 + " = " 
                 + ctx.expr().getText() 
                 + ";"); 
     }
     public void enterDeclare(WikiParser.DeclareContext ctx) {
+        //String identity = ctx.ident().getText();
+
+        //make identity match an appropriate java declaration for arrays 
         if(main_flag == 0) {
             System.out.println("static " + matchJava(ctx.type().getText())
-                + ctx.ID().getText() 
+                + ctx.ident().getText()
                 + ";"); 
             return;
         }
         System.out.println(matchJava(ctx.type().getText())
-                + ctx.ID().getText() 
+                + ctx.ident().getText()
                 + ";"); 
-
         
     }
     public void enterAssign(WikiParser.AssignContext ctx) {
-        System.out.println(ctx.ID().getText() 
+        System.out.println(ctx.ident().getText() 
                 + " = " 
                 + ctx.expr().getText() 
                 + ";"); 
     }
     public void enterIncDec(WikiParser.IncDecContext ctx) {
-        if(ctx.getStart().getType() == WikiParser.ID) 
-            System.out.println(ctx.ID().getText() 
+        if(ctx.getStart() == ctx.ident()) 
+            System.out.println(ctx.ident().getText() 
                 + ctx.u.getText() + ";");
         else
             System.out.println(ctx.u.getText() 
-                + ctx.ID().getText() + ";");
+                + ctx.ident().getText() + ";");
 
     }
  
