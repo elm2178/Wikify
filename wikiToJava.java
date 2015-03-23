@@ -1,9 +1,9 @@
 import java.io.*;
 
 public class wikiToJava extends WikiBaseListener {
-    int main_flag = 0;
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     PrintStream old = System.out; 
+    private static int main_flag = 0;
 
     /* creates the java test class with main method */
     @Override
@@ -11,18 +11,20 @@ public class wikiToJava extends WikiBaseListener {
         System.out.print("public class TestWiki { \n");
     }
 
-    public void enterStmt_seq(WikiParser.Stmt_seqContext ctx) {
-        if(main_flag == 0)
-        {
-            System.out.println("public static void main(String[] args) {");
-            main_flag = 1;
-        }
+    public void enterMain_func(WikiParser.Main_funcContext ctx) {
+        main_flag = 1;
+        System.out.println("public static void main(String[] args) {");
+    }
+
+    public void exitMain_func(WikiParser.Main_funcContext ctx) {
+        main_flag = 0;
+        System.out.println("}");
     }
 
     /* Closes Parenthesis at exit prog */
     @Override
     public void exitProg(WikiParser.ProgContext ctx) {
-        System.out.print("}\n}");
+        System.out.print("}");
     }
 
     public void enterFuncDef(WikiParser.FuncDefContext ctx) {
@@ -77,7 +79,6 @@ public class wikiToJava extends WikiBaseListener {
     }
 
     public void exitFor_stmt(WikiParser.For_stmtContext ctx) {
-        System.out.flush();
         String result = stream.toString();
         System.setOut(old);
 
@@ -97,6 +98,8 @@ public class wikiToJava extends WikiBaseListener {
             i++;
         }
         System.out.println("}");
+        stream.reset();
+
     }
 
     public void enterWhile_stmt(WikiParser.While_stmtContext ctx) {
@@ -104,6 +107,9 @@ public class wikiToJava extends WikiBaseListener {
     }
     public void exitWhile_stmt(WikiParser.While_stmtContext ctx) {
         System.out.println("}");
+    }
+    public void enterBreak(WikiParser.BreakContext ctx) {
+        System.out.println("break;");
     }
 
     public void enterIf_stmt(WikiParser.If_stmtContext ctx) {
@@ -121,8 +127,6 @@ public class wikiToJava extends WikiBaseListener {
          String buffer = "";
         if(ctx.expr() != null)
             buffer += ctx.expr().getText();
-        if(ctx.str_expr() != null) 
-            buffer += ctx.str_expr().getText();
 
         if(ctx.params() != null)
             buffer += ", ";
@@ -164,17 +168,47 @@ public class wikiToJava extends WikiBaseListener {
     /* Print Java Assignment */
     @Override
     public void enterDecAssign(WikiParser.DecAssignContext ctx) {
+        if(main_flag == 0) {
+            System.out.println("static " + matchJava(ctx.type().getText())
+                + ctx.ID().getText() 
+                + " = " 
+                + ctx.expr().getText() 
+                + ";"); 
+            return;
+        }
         System.out.println(matchJava(ctx.type().getText())
                 + ctx.ID().getText() 
                 + " = " 
                 + ctx.expr().getText() 
                 + ";"); 
     }
+    public void enterDeclare(WikiParser.DeclareContext ctx) {
+        if(main_flag == 0) {
+            System.out.println("static " + matchJava(ctx.type().getText())
+                + ctx.ID().getText() 
+                + ";"); 
+            return;
+        }
+        System.out.println(matchJava(ctx.type().getText())
+                + ctx.ID().getText() 
+                + ";"); 
+
+        
+    }
     public void enterAssign(WikiParser.AssignContext ctx) {
         System.out.println(ctx.ID().getText() 
                 + " = " 
                 + ctx.expr().getText() 
                 + ";"); 
+    }
+    public void enterIncDec(WikiParser.IncDecContext ctx) {
+        if(ctx.getStart().getType() == WikiParser.ID) 
+            System.out.println(ctx.ID().getText() 
+                + ctx.u.getText() + ";");
+        else
+            System.out.println(ctx.u.getText() 
+                + ctx.ID().getText() + ";");
+
     }
  
     public void enterPrint(WikiParser.PrintContext ctx) {
@@ -189,7 +223,7 @@ public class wikiToJava extends WikiBaseListener {
             result = "String ";
         if(type.compareTo("bool") == 0)
             result = "boolean ";
-        if(type.compareTo("int") == 0)
+        if(type.compareTo("num") == 0)
             result = "int ";
 
         return result;

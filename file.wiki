@@ -1,12 +1,11 @@
 //comment test
-//func int test
-func int add(int a,int b) 
+func num add(num a,num b) 
         return a + b
 end
 
 //comment test
 //multiple func test
-func int sub(int c, int d)
+func num sub(num c,num d)
         return c - d
 end
 
@@ -15,7 +14,7 @@ func println(string word)
         print(word + "\n")
 end
 //func overloading test
-func println(int word)
+func println(num word)
         print(word + "\n")
 end
 
@@ -24,12 +23,10 @@ func string strcat(string pre, string suf)
         return pre + suf
 end
 
-/* hello */
-//int assignment test
-int a = 5 + 5
-int b = 5 * 5
+main()
+num a = 5 + 5
+num b = 5 * 5
 
-//print test
 print(a)
 print("\n")
 println(b)
@@ -65,7 +62,7 @@ if(!truebool)
 else
         println("else statement also working")
 end
-int i = 0
+num i = 0
 while(i < 10)
         if(i < 9)
                 print(i)
@@ -74,9 +71,18 @@ while(i < 10)
         end
         i = i + 1
 end
-for(int k = 0; k < 10; k = k + 1)
+for(num k = 0; k < 10; ++k)
         print(k)
         b = add(k, k)
         print(b)
 end
+
 print("\n")
+for(num j = 0; j < 10; j++)
+        if(j == 5)
+                b = j
+                break
+        end
+end
+println(b)
+end
