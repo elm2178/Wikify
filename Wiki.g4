@@ -1,10 +1,18 @@
 grammar Wiki;
+
 /* shangshang pushed*/ 
 /* Lennart just tried github push*/
 /* The Start Production */
 /* at some point I would like to add import statements */
 
-prog: prog_seq;
+prog: import_seq prog_seq
+    ;
+
+import_seq: import_stmt NL import_seq
+    | /* epsilon */
+    ;
+
+import_stmt: IMPORT ID ('.'ID)* NL;
 
 prog_seq: seq prog_seq 
     | /* epsilon */
@@ -13,6 +21,7 @@ prog_seq: seq prog_seq
 seq: func_seq
     | main_func
     | stmt_seq
+    | import_stmt
     | NL
     ;
 
@@ -68,9 +77,13 @@ func_action: ident '=' ID '(' params ')'# FuncAssign
     ;
 
 /* maybe a funccall should be an expression, not sure yet */
-expr: int_expr | bool_expr
+expr: int_expr 
+    | bool_expr
     | str_expr
+    | static_fcall
     ;
+
+static_fcall: ID'.'ID'(' params ')';
 
 /* Function Definition *******/
 func: FUNC (type|) ID'('args')' NL func_stmt ret_stmt END # FuncDef
@@ -142,6 +155,8 @@ fact: '('expr')'
 type: INT
     | STRING
     | BOOL 
+    | PAGE
+    | TABLE
     ; 
 
 MUL: '*';
@@ -161,6 +176,8 @@ MM: '--';
 INT: 'num';
 STRING: 'string';
 BOOL: 'bool';
+TABLE: 'table';
+PAGE: 'page';
 TRUE: 'true';
 FALSE: 'false';
 PRINT: 'print';
@@ -173,6 +190,7 @@ WHILE: 'while';
 FOR: 'for';
 BRK: 'break';
 MAIN: 'main';
+IMPORT: 'import';
 /****************************/
 ID : [a-zA-Z][a-zA-Z0-9]*;
 NUM: [0-9]+;

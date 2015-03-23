@@ -4,10 +4,12 @@ public class wikiToJava extends WikiBaseListener {
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     PrintStream old = System.out; 
     private static int main_flag = 0;
+    private static int class_flag = 0;
 
     /* creates the java test class with main method */
     @Override
     public void enterProg(WikiParser.ProgContext ctx) {
+        //some how print out import statements use class_flag?
         System.out.print("public class TestWiki { \n");
     }
 
