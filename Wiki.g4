@@ -12,7 +12,7 @@ import_seq: import_stmt NL import_seq
     | /* epsilon */
     ;
 
-import_stmt: IMPORT ID ('.'ID)* NL;
+import_stmt: IMPORT ID ('.'ID)*;
 
 prog_seq: seq prog_seq 
     | /* epsilon */
@@ -21,7 +21,6 @@ prog_seq: seq prog_seq
 seq: func_seq
     | main_func
     | stmt_seq
-    | import_stmt
     | NL
     ;
 
@@ -53,7 +52,7 @@ comm: LCOM
     | COMMENT
     ;
 
-ident: ID ('['(NUM|)']')*
+ident: ID ('['NUM']'|'['']')*
     ;
     
 /* Loop Types ***************/
@@ -81,6 +80,11 @@ expr: int_expr
     | bool_expr
     | str_expr
     | static_fcall
+    | array_expr
+    ;
+
+array_expr: ident
+    | '{' params '}'
     ;
 
 static_fcall: ID'.'ID'(' params ')';
@@ -157,8 +161,8 @@ type: INT
     | BOOL 
     | PAGE
     | TABLE
+    | ID /* this will be for user defined types or classes if we allow it*/
     ; 
-
 MUL: '*';
 ADD: '+';
 DIV: '/';

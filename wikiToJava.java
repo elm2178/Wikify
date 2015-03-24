@@ -186,7 +186,8 @@ public class wikiToJava extends WikiBaseListener {
                 + ";"); 
     }
     public void enterDeclare(WikiParser.DeclareContext ctx) {
-        //String identity = ctx.ident().getText();
+        String identity = ctx.toInfoString(WikiParser);
+        System.out.println("//" + identity);
 
         //make identity match an appropriate java declaration for arrays 
         if(main_flag == 0) {
@@ -200,6 +201,7 @@ public class wikiToJava extends WikiBaseListener {
                 + ";"); 
         
     }
+    
     public void enterAssign(WikiParser.AssignContext ctx) {
         System.out.println(ctx.ident().getText() 
                 + " = " 
