@@ -1,8 +1,15 @@
-import java.util.ArrayList
-
+import wiki.type.Page
 
 func num add(num a,num b) 
         return a + b
+end
+
+func printArr(num arr[])
+        num size = arr.length
+        for(num i = 0; i < arr.length; i++) 
+                print(arr[i])
+        end
+        print("\n")
 end
 
 //comment test
@@ -28,7 +35,6 @@ end
 main()
 num a = 5 + 5
 num b = 5 * 5
-num array[]
 
 print(a)
 print("\n")
@@ -88,4 +94,11 @@ for(num j = 0; j < 10; j++)
         end
 end
 println(b)
+
+num array[5][10]
+num arr[] = { 5, 3, 2, 1}
+printArr(arr)
+page p1
+p1.url("http:google.com")
+println(p1.getUrl())
 end

@@ -3,23 +3,40 @@ import java.io.*;
 public class wikiToJava extends WikiBaseListener {
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     PrintStream old = System.out; 
-    private static int main_flag = 0;
+    private static int func_flag = 0;
     private static int class_flag = 0;
 
-    /* creates the java test class with main method */
     @Override
     public void enterProg(WikiParser.ProgContext ctx) {
-        //some how print out import statements use class_flag?
-        System.out.print("public class TestWiki { \n");
+    }
+
+    public void enterImport_stmt(WikiParser.Import_stmtContext ctx) {
+        String buffer = "import ";
+        int i = 0;
+        while(ctx.getStop().getText().compareTo(ctx.ID(i).getText()) != 0) {
+            buffer += ctx.ID(i).getText() + ".";
+            i++;
+        }
+
+        buffer+= ctx.getStop().getText() + ";";
+
+        System.out.println(buffer);
+    }
+
+    public void enterProg_seq(WikiParser.Prog_seqContext ctx) {
+        if(class_flag == 0) {
+            class_flag = 1;
+            System.out.print("public class TestWiki { \n");
+        }
     }
 
     public void enterMain_func(WikiParser.Main_funcContext ctx) {
-        main_flag = 1;
+        func_flag = 1;
         System.out.println("public static void main(String[] args) {");
     }
 
     public void exitMain_func(WikiParser.Main_funcContext ctx) {
-        main_flag = 0;
+        func_flag = 0;
         System.out.println("}");
     }
 
@@ -30,6 +47,7 @@ public class wikiToJava extends WikiBaseListener {
     }
 
     public void enterFuncDef(WikiParser.FuncDefContext ctx) {
+        func_flag = 1;
         String buffer = "public static "; 
         if(ctx.type() == null)
             buffer += "void ";
@@ -61,6 +79,7 @@ public class wikiToJava extends WikiBaseListener {
     }
 
     public void exitFuncDef(WikiParser.FuncDefContext ctx) {
+        func_flag = 0;
         System.out.println("} ");
     }
 
@@ -170,7 +189,7 @@ public class wikiToJava extends WikiBaseListener {
     /* Print Java Assignment */
     @Override
     public void enterDecAssign(WikiParser.DecAssignContext ctx) {
-        if(main_flag == 0) {
+        if(func_flag == 0) {
             System.out.println("static " + matchJava(ctx.type().getText())
                 + ctx.ident().getText() 
                 + " = " 
@@ -186,20 +205,16 @@ public class wikiToJava extends WikiBaseListener {
                 + ";"); 
     }
     public void enterDeclare(WikiParser.DeclareContext ctx) {
-        String identity = ctx.toInfoString(WikiParser);
-        System.out.println("//" + identity);
+        String type = matchJava(ctx.type().getText());
+        String result = handleIdentity(ctx.ident().getText(), type);
 
         //make identity match an appropriate java declaration for arrays 
-        if(main_flag == 0) {
-            System.out.println("static " + matchJava(ctx.type().getText())
-                + ctx.ident().getText()
-                + ";"); 
+        if(func_flag == 0) {
+            System.out.println("static " + result);
             return;
         }
-        System.out.println(matchJava(ctx.type().getText())
-                + ctx.ident().getText()
-                + ";"); 
-        
+
+        System.out.println(result);
     }
     
     public void enterAssign(WikiParser.AssignContext ctx) {
@@ -217,6 +232,10 @@ public class wikiToJava extends WikiBaseListener {
                 + ctx.ident().getText() + ";");
 
     }
+
+    public void enterStaticCall(WikiParser.StaticCallContext ctx) {
+        System.out.println(ctx.static_fcall().getText() + ";");
+    }
  
     public void enterPrint(WikiParser.PrintContext ctx) {
         System.out.println("System.out.print("
@@ -232,7 +251,41 @@ public class wikiToJava extends WikiBaseListener {
             result = "boolean ";
         if(type.compareTo("num") == 0)
             result = "int ";
+        if(type.compareTo("page") == 0)
+            result = "Page ";
 
+        return result;
+    }
+
+    private String handleIdentity(String ident, String type) {
+        int open = ident.indexOf('[');
+
+        //not an array
+        if(open == -1) {
+            if(type.compareTo("Page ") == 0)
+                return type + " " + ident + " = " + "new " + type + "();";
+
+            return type + " " + ident + ";";
+        }
+
+        int close = ident.indexOf(']');
+
+        if(open + 1 == close) {
+            //no number
+            return type + " " + ident + ";";
+        }
+
+        String buffer = "";
+        String id = ident.substring(0, open);
+        String brackets = ident.substring(open, ident.length());
+        
+        String decl_brackets = "";
+        for(int i = 0; i < ident.length(); i++) {
+            if(ident.charAt(i) == '[')
+                decl_brackets += "[]";
+        }
+
+        String result = type + " " + id + decl_brackets + "= new " + type + brackets + ";";
         return result;
     }
 

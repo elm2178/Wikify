@@ -28,7 +28,7 @@ main_func: MAIN '()' NL stmt_seq END
     ;
 
 stmt_seq: stmt NL stmt_seq
-        | stmt (NL|EOF)
+        | stmt (NL|)
         ;
         
 func_seq: func NL func_seq
@@ -45,6 +45,7 @@ stmt: PRINT '(' expr ')'            # Print
     | while_stmt                    # WhileStmt
     | for_stmt                      # ForStmt
     | comm                          # Comment
+    | static_fcall                  # StaticCall
     | BRK                           # Break
     ;
 
@@ -52,7 +53,7 @@ comm: LCOM
     | COMMENT
     ;
 
-ident: ID ('['NUM']'|'['']')*
+ident: ID ('['(int_expr|static_fcall)']'|'['']')*
     ;
     
 /* Loop Types ***************/
@@ -76,18 +77,21 @@ func_action: ident '=' ID '(' params ')'# FuncAssign
     ;
 
 /* maybe a funccall should be an expression, not sure yet */
-expr: int_expr 
+expr: array_expr
+    | int_expr 
     | bool_expr
     | str_expr
     | static_fcall
-    | array_expr
     ;
 
 array_expr: ident
-    | '{' params '}'
+    | '{'expr (','expr)*'}'
     ;
 
-static_fcall: ID'.'ID'(' params ')';
+static_fcall: ID '.' ID '('expr')'
+    | ID '.' ID '()'
+    | ID '.' ID
+    ;
 
 /* Function Definition *******/
 func: FUNC (type|) ID'('args')' NL func_stmt ret_stmt END # FuncDef
@@ -99,7 +103,7 @@ func_stmt: stmt NL func_stmt        # FuncStmt
         ;
 
 /* Function Arguments ********/
-params: expr ',' params            
+params: expr ',' params
     | expr
     | /* epsilon */   
     ;
@@ -130,7 +134,8 @@ bool_fact: '(' bool_expr ')'
     | '!'bool_fact                
     | cond
     ;
-cond: int_expr (LT|GT|LTE|GTE|EQ|NEQ) int_expr;
+    
+cond: int_expr (LT|GT|LTE|GTE|EQ|NEQ) expr;
 /****************************/
 
 /* String Expressions *******/
