@@ -9,7 +9,7 @@ public class Num {
         number = i;
     }
 
-    public static String string(int i) {
+    public static String str(int i) {
         return Integer.toString(i);
     }
 
