@@ -253,6 +253,8 @@ public class wikiToJava extends WikiBaseListener {
             result = "int ";
         if(type.compareTo("page") == 0)
             result = "Page ";
+	if(type.compareTo("table") == 0)
+	    result = "Table ";
 
         return result;
     }
@@ -264,7 +266,8 @@ public class wikiToJava extends WikiBaseListener {
         if(open == -1) {
             if(type.compareTo("Page ") == 0)
                 return type + " " + ident + " = " + "new " + type + "();";
-
+	    if(type.compareTo("Table ")== 0)
+		return type + " " + ident + " = " + "new " + type + "();";
             return type + " " + ident + ";";
         }
 
