@@ -9,6 +9,12 @@ public class Table {
 	 * copies contents from input to table
 	 * @param input: 2D String array, must have known size, individual entries can be null
 	 */
+        public Table() {
+            rows = 0;
+            cols = 0;
+            table = null;
+        }
+
 	public Table(String[][] input){
 		rows = input.length;
 		cols = input[0].length;
@@ -108,8 +114,5 @@ public class Table {
 	}
 	
 	//printToFile method?
-	
-	
-	
 	
 }
