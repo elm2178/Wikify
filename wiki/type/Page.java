@@ -4,24 +4,31 @@ import java.io.*;
 
 public class Page {
     private String url;
+    private String html;
+    private WikiParser parser;
     
     public Page() {
         this.url = "";
+        this.parser = null;
     }
 
     public Page(String url) {
         this.url = url;
+        html = getHtml();
+        this.parser = new WikiParser(html.split("\n"));
     }
 
     public void url(String url) {
         this.url = url;
+        html = getHtml();
+        this.parser = new WikiParser(html.split("\n"));
     }
 
     public String getUrl() {
         return url;
     }
 
-    public String html() {
+    public String getHtml() {
         try {
             String line;
             String buffer = "";
@@ -40,5 +47,9 @@ public class Page {
         }
 
         return "";
+    }
+
+    public String[] getParagraphs() {
+        return parser.getParagraphs();
     }
 }

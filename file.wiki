@@ -1,5 +1,6 @@
 import wiki.type.Page
 import wiki.type.Num
+import wiki.type.Table
 
 func num add(num a,num b) 
         return a + b
@@ -99,7 +100,7 @@ num array[5][10]
 num arr[] = { 5, 3, 2, 1}
 printArr(arr)
 page p1
-p1.url("http://wikipedia.com")
+p1.url("http://en.wikipedia.org/wiki/Solar_eclipse_of_March_20,_2015") 
 println(p1.getUrl())
 //Num class function test
 string binary = Num.binary(arr[0])
@@ -108,6 +109,8 @@ string hex = Num.hex(157)
 println(hex)
 string nstr = Num.str(arr[0])
 println(nstr)
-string html = p1.html()
-println(html)
+string html = p1.getHtml()
+//println(html)
+string paras[] = p1.getParagraphs()
+println(paras[1])
 end
