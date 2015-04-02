@@ -158,6 +158,7 @@ term: term op=(MUL|DIV|MOD) fact    # MulDiv
 fact: '('expr')'
     | NUM
     | ident 
+    | static_fcall
     ;
 /****************************/
 
