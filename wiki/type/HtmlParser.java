@@ -1,11 +1,11 @@
 package wiki.type;
 
-public class WikiParser{
+public class HtmlParser{
     private String[] page;
     private int x;
     private int y;
 
-    public WikiParser(String[] page){
+    public HtmlParser(String[] page){
         this.page = page;
         x = 0; //array index
         y = 0; //String index
