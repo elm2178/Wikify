@@ -1,5 +1,4 @@
 run: 
-	java -jar /Users/Lennart/Documents/antlr-4.0-complete.jar Wiki.g4
 	javac Wiki*.java
 	javac Test.java
 	cat file.wiki | java Test > TestWiki.java && javac TestWiki.java && java TestWiki
