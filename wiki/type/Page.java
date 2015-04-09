@@ -3,7 +3,7 @@ import java.net.*;
 import java.io.*;
 import java.util.Arrays;
 
-public class Page {
+public class Page{
     private String url;
     private String[] html;
     private HtmlParser parser;
@@ -60,4 +60,22 @@ public class Page {
     public String[] getParagraphs() {
         return parser.getParagraphs();
     }
+
+    //asks user for input --> will automatically search wiki for search terms
+    public void urlPrompt(){
+	try{
+	System.out.println("Please input your search term(s): ");
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	String s = br.readLine();
+	s = s.replace(",","");
+	s = s.replace(";","");
+	s = s.replace(" ","_");
+	this.url = "http://www.wikipedia.org/wiki/"+s;
+	this.html = getHtml();
+        this.parser = new HtmlParser(html);
+	} catch (Exception e){
+		e.printStackTrace();
+	}
+    }
+
 }
