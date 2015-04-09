@@ -109,9 +109,13 @@ string hex = Num.hex(157)
 println(hex)
 string nstr = Num.str(arr[0])
 println(nstr)
-//below command doesn't exist! needed??? probably
 //string html = p1.getHtml()
 //println(html)
 string paras[] = p1.getParagraphs()
 println(paras[1])
+page p2
+p2.urlPrompt()
+println(p2.getUrl())
+string s[] = p2.getParagraphs()
+println(s[0])
 end
