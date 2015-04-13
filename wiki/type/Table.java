@@ -15,6 +15,14 @@ public class Table {
             table = null;
         }
 
+        public void setRowCol(int row, int col) {
+            this.cols = col;
+            this.rows = row;
+
+            //create a string[][]
+            table = new String[row][col]; 
+        }
+
 	public Table(String[][] input){
 		rows = input.length;
 		cols = input[0].length;
@@ -26,7 +34,7 @@ public class Table {
 		}	
 	}
 	
-	/**
+	/*
 	 * set content of cell(x,y) to new entry
 	 * @param entry: a string you want to insert
 	 * @param x: row index
