@@ -118,4 +118,7 @@ p2.urlPrompt()
 println(p2.getUrl())
 string s[] = p2.getParagraphs()
 println(s[0])
+string f[] = p2.getParagraphs()
+println(f[0])
+p2.getInfobox()
 end

@@ -11,8 +11,35 @@ public class HtmlParser{
         y = 0; //String index
     }
 
-    public String[] getParagraphs(){ //Returns an array with all paragraphs on a Wikipage
+    //returns an array containing the infobox material
+    public void getInfobox(){
+	x=0;
+	y=0;
+	System.out.println("still looking for tables....");
+	String[] output = new String[1000];
+	int lineNum = 0;
+	String tag="";
+	String tempout="";
 
+	while(!end()){
+	    if(show(1).equals("<")){
+		next();
+		int a = ahead(" class");
+		tag = getString(a);
+		next();
+		if(tag.equals("table")){
+			System.out.println("Found a table!!!");
+	    	}
+	    }
+	    else{
+		skip(ahead("<"));
+	    }
+	}
+    }
+
+    public String[] getParagraphs(){ //Returns an array with all paragraphs on a Wikipage
+	x=0;
+	y=0;
         String[] output = new String[1000];
         int parCount = 0;
         String tag = "";

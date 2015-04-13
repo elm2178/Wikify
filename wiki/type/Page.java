@@ -60,6 +60,11 @@ public class Page{
     public String[] getParagraphs() {
         return parser.getParagraphs();
     }
+	
+    public void getInfobox(){
+	System.out.println("Looking for tables!!!");
+	parser.getInfobox();
+    }
 
     //asks user for input --> will automatically search wiki for search terms
     public void urlPrompt(){
