@@ -15,26 +15,73 @@ public class HtmlParser{
     public void getInfobox(){
 	x=0;
 	y=0;
-	System.out.println("still looking for tables....");
 	String[] output = new String[1000];
-	int lineNum = 0;
+	int parCount=0;
 	String tag="";
 	String tempout="";
+        while(!end()){
 
-	while(!end()){
-	    if(show(1).equals("<")){
-		next();
-		int a = ahead(" class");
-		tag = getString(a);
-		next();
-		if(tag.equals("table")){
-			System.out.println("Found a table!!!");
-	    	}
-	    }
-	    else{
-		skip(ahead("<"));
-	    }
+goback1:
+            if(show(1).equals("<")){
+                tag = tagger();
+		if(tag.length()>5){
+                    if(tag.substring(0,5).equals("table")&&tag.contains("infobox")){
+			while(true){
+			while(show(1).equals("<")){
+                            tag = tagger(); //gets tag. position of vector is now right after tag
+                            if(tag.equals("/table")){ //if endtag
+				System.out.println(tempout);
+                                output[parCount++] = tempout;
+                                tempout = "";
+                                break goback1;
+                            }
+			}
+			tempout += getString(ahead("<"))+" ";
+		    }
+		    }
+		}
+	     	
+	     }
+	     else{
+		 skip(ahead("<"));
+	     }
 	}
+    }                            
+
+    public void getTables(){
+        x=0;
+        y=0;
+        String[] output = new String[1000];
+        int parCount=0;
+        String tag="";
+        String tempout="";
+        while(!end()){
+
+goback1:
+            if(show(1).equals("<")){
+                tag = tagger();
+                if(tag.length()>5){
+                    if(tag.substring(0,5).equals("table")){
+                        while(true){
+                        while(show(1).equals("<")){
+                            tag = tagger(); //gets tag. position of vector is now right after tag
+                            if(tag.equals("/table")){ //if endtag
+                                System.out.println(tempout);
+                                output[parCount++] = tempout;
+                                tempout = "";
+                                break goback1;
+                            }
+                        }
+                        tempout += getString(ahead("<"))+" ";
+                    }
+                    }
+                }
+
+             }
+             else{
+                 skip(ahead("<"));
+             }
+        }
     }
 
     public String[] getParagraphs(){ //Returns an array with all paragraphs on a Wikipage
@@ -87,7 +134,7 @@ goback:
         }
 
         String[] temp = new String[parCount]; //Get rid off nulls
-        for(int x=0; x<parCount; x++)
+        for(int x=0; x<3; x++)
             temp[x] = output[x];
         output = temp;
         return output;
@@ -150,7 +197,7 @@ goback:
             temp+=page[a].substring(b,b+1);
         }
 
-        while(!s.equals(temp)){
+        while(!s.equals(temp)&&!end()){
             counter++;
 
             if(b<page[a].length()-1)
@@ -208,6 +255,6 @@ goback:
     }
 
     private boolean end(){
-        return((x == page.length-1)&&(y == page[x].length()-1));
+        return(x == page.length-1);//&&(y == page[x.length()-1].length()-1));
     }
 }

@@ -62,8 +62,11 @@ public class Page{
     }
 	
     public void getInfobox(){
-	System.out.println("Looking for tables!!!");
 	parser.getInfobox();
+    }
+
+    public void getTables(){
+	parser.getTables();
     }
 
     //asks user for input --> will automatically search wiki for search terms
