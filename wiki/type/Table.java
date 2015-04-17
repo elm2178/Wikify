@@ -1,28 +1,32 @@
 package wiki.type;
 import java.util.*;
+import java.io.File;
+import jxl.*;
+import jxl.write.*;
 
 public class Table {
 	private String[][] table;
 	private int rows, cols;
 	
 	/**
+	 * empty constructor
+	 */
+	public Table(){
+		rows = 0;
+		cols = 0;
+		table = null;
+	}
+	
+	public void setRowCol(int row, int col) {
+        this.cols = col;
+        this.rows = row;
+        table = new String[row][col]; 
+    }
+	
+	/**
 	 * copies contents from input to table
 	 * @param input: 2D String array, must have known size, individual entries can be null
 	 */
-        public Table() {
-            rows = 0;
-            cols = 0;
-            table = null;
-        }
-
-        public void setRowCol(int row, int col) {
-            this.cols = col;
-            this.rows = row;
-
-            //create a string[][]
-            table = new String[row][col]; 
-        }
-
 	public Table(String[][] input){
 		rows = input.length;
 		cols = input[0].length;
@@ -34,7 +38,7 @@ public class Table {
 		}	
 	}
 	
-	/*
+	/**
 	 * set content of cell(x,y) to new entry
 	 * @param entry: a string you want to insert
 	 * @param x: row index
@@ -121,6 +125,44 @@ public class Table {
 		System.out.println();
 	}
 	
-	//printToFile method?
+	public void excel(String fileName){
+		int offset = 0;
+		fileName = fileName.split("\\.")[0]+".xls"; 
+		WritableWorkbook workbook = null;
+		WritableSheet sheet = null;
+		try {
+			File f = new File(fileName);
+			if(f.isFile()) { 
+				Workbook old = Workbook.getWorkbook(new File(fileName));
+				workbook = Workbook.createWorkbook(new File(fileName), old);
+				sheet = workbook.getSheet(0);
+				offset = sheet.getRows() + 2;
+			}
+			else {
+				workbook = Workbook.createWorkbook(new File(fileName));
+				sheet = workbook.createSheet("sheet", 0); 
+			}
+			
+		    for (int i=0; i<rows; i++){
+				for (int j=0; j<cols; j++){
+					Label label = new Label(j,i+offset,table[i][j]);
+					sheet.addCell(label);
+				}
+			}
+		    workbook.write();
+		    workbook.close();
+		    
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
+		
+	    
+		
+	}
+	
+	
+	
 	
 }
