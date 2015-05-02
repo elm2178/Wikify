@@ -1,3 +1,5 @@
+package wiki.type;
+
 import java.util.Scanner;
 
 public class ParseTester{
@@ -12,11 +14,9 @@ public class ParseTester{
 
 		inputURL = "http://en.wikipedia.org/wiki/Robert_Johnson";
 
-		Page html = new Page(inputURL);
-		String[] paras = html.getParagraphs();
-
-		for(int i=0; i<paras.length; i++)
-			System.out.println(paras[i++]+"\n");
-
+		Page p1 = new Page(inputURL);
+                String[] strarray = p1.getHtml();
+                HtmlParser parser = new HtmlParser(strarray);
+                //String img = parser.getImg();
 	}
 }

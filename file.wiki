@@ -1,7 +1,3 @@
-import wiki.type.Page
-import wiki.type.Num
-import wiki.type.Table
-
 func num add(num a,num b) 
         return a + b
 end
@@ -121,5 +117,5 @@ println(s[0])
 string f[] = p2.getParagraphs()
 println(f[0])
 p2.getTables()
-//p2.getInfobox()
+p2.getInfobox()
 end

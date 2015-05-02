@@ -21,7 +21,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class Image {
+public class Image extends DataType{
 
     String inputURL;
     ArrayList<String> picLinks;
@@ -37,7 +37,6 @@ public class Image {
 
         this.inputURL = url;
 
-        String inputURL = "http://en.wikipedia.org/wiki/Accra";
         Page html = new Page(inputURL);
         String[] sourceCodeArray = html.getHtml();
 
@@ -152,5 +151,9 @@ public class Image {
             frame.setVisible(true);
         }
 
+    }
+    
+    public int getType() {
+        return DataType.IMAGE; 
     }
 }

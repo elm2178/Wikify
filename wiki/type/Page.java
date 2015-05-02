@@ -3,7 +3,7 @@ import java.net.*;
 import java.io.*;
 import java.util.Arrays;
 
-public class Page{
+public class Page extends DataType{
     private String url;
     private String[] html;
     private HtmlParser parser;
@@ -86,4 +86,7 @@ public class Page{
 	}
     }
 
+    public int getType() {
+        return DataType.PAGE;
+    }
 }
