@@ -1,4 +1,6 @@
 run: 
+	# use below export CLASSPATH line to set classpath before running make"
+	#export CLASSPATH=".:antlr-4.0-complete.jar:$$CLASSPATH"
 	java -jar antlr-4.0-complete.jar Wiki.g4
 	javac Wiki*.java
 	javac Test.java
