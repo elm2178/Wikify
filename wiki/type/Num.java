@@ -1,5 +1,5 @@
 package wiki.type;
-public class Num {
+public class Num extends DataType {
     private int number;
 
     public Num() {
@@ -19,5 +19,9 @@ public class Num {
 
     public static String hex(int i) {
         return Integer.toHexString(i);
+    }
+
+    public int getType() {
+        return DataType.NUM;
     }
 }
