@@ -44,7 +44,8 @@ public class Page extends DataType{
 
                 if(i == buffer.length)
                     buffer = Arrays.copyOf(buffer, buffer.length *2);
-
+		//remove weird wikipedia character sequence "&#160" from document
+		line=line.replace("&#160","");
                 buffer[i] = line;
                 i++;
             }
