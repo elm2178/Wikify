@@ -2,6 +2,8 @@ package wiki.type;
 import java.net.*;
 import java.io.*;
 import java.util.Arrays;
+import org.apache.poi.xwpf.usermodel.*;
+
 
 public class Page extends DataType{
     private String url;
@@ -60,7 +62,37 @@ public class Page extends DataType{
     public String[] getParagraphs() {
         return parser.getParagraphs();
     }
-	
+
+    
+    public void toWord(String fileName){
+        String[] paragraphs = this.getParagraphs();
+	fileName = fileName.split("\\.")[0] + ".docx";
+	File f = new File(fileName);
+	XWPFDocument doc = null;
+	 
+	if (f.isFile()) {
+	    try {doc = new XWPFDocument(new FileInputStream(fileName));}
+	    catch (Exception e) {e.printStackTrace();}
+	}
+	else {doc = new XWPFDocument();}
+	 
+	for (int i=0; i< paragraphs.length; i++){
+	    XWPFParagraph p = doc.createParagraph();
+	    XWPFRun r = p.createRun();
+	    r.setText(paragraphs[i]);
+	    r.addBreak();
+	}
+	 
+	FileOutputStream out;
+	try {
+	    out = new FileOutputStream(fileName);
+	    doc.write(out);
+	    out.close();
+	}  catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+
     public void getInfobox(){
 	parser.getInfobox();
     }
