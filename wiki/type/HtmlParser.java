@@ -11,10 +11,92 @@ public class HtmlParser{
         y = 0; //String index
     }
 
+   public String[] returnInfobox(){
+    	x=0;y=0;
+    	String special = "infobox";
+    	boolean subtitle=false;
+    	boolean title=false;
+    	int tableCounter=0;
+    	String[] output = new String[1000];
+    	int parCount=0;
+    	String tag="";
+    	String tempout="";
+    	while(!end()){
+
+    	goback1:
+    	if(show(1).equals("<")){
+    	tag = tagger();
+    	if(tag.length()>5){
+    	if(tag.substring(0,5).equals("table")&&tag.contains(special)){
+    	tableCounter++;
+    	special="asdkfjalsdjv";
+    	while(true){
+    		while(show(1).equals("<")){
+    			tag = tagger(); //gets tag. position of vector is now right after tag
+    			if(tag.length()>5){
+    				if(tag.substring(0,5).equals("table")){
+    				tableCounter++;
+    				}
+    			}
+    			if(tag.length()>3){
+    				if(tag.substring(0,2).equals("th")){
+    				title=true;
+    				}
+    			}                            
+    			if(tag.length()>3){
+    				if(tag.substring(0,2).equals("td")){
+    				subtitle=true;
+    				}
+    			}
+
+    			if(tag.equals("/table")){ //if endtag
+    				tableCounter--;
+    				if(tableCounter==0){
+    					System.out.println(tempout);
+    					output[parCount++] = tempout;
+    					tempout = "";
+    					break goback1;
+    					}
+    					}
+    				}
+    				String temp="";
+    				if(title){
+    					tempout+="\n";
+    				title=false;
+    				}
+    				if(subtitle){
+    					tempout+="\n\t";
+    					subtitle=false;
+ 				}
+
+    				temp += getString(ahead("<"));
+    				if(tempout!=null)
+    					tempout+=temp+" ";
+    				}
+    			}
+    		}
+
+    		}
+    		else{
+    		skip(ahead("<"));
+		}
+    	}
+    	String[] temp = new String[parCount]; //Get rid off nulls
+    	for(int x=0; x<3; x++)
+    		temp[x] = output[x];
+    	output = temp;
+    	return output;
+    	
+    }   
+
+
+
+
     //returns an array containing the infobox material
     public void getInfobox(){
 	x=0;
 	y=0;
+	String special = "infobox";
 	boolean subtitle=false;
 	boolean title=false;
 	int tableCounter=0;
@@ -28,8 +110,9 @@ goback1:
             if(show(1).equals("<")){
                 tag = tagger();
 		if(tag.length()>5){
-                    if(tag.substring(0,5).equals("table")&&tag.contains("infobox")){
+                    if(tag.substring(0,5).equals("table")&&tag.contains(special)){
 			tableCounter++;
+			special="asdkfjalsdjv";
 			while(true){
 			while(show(1).equals("<")){
                             tag = tagger(); //gets tag. position of vector is now right after tag
@@ -65,7 +148,7 @@ goback1:
 			    title=false;
 			}
 			if(subtitle){
-			    tempout+="\n\t- ";
+			    tempout+="\n\t";
 			    subtitle=false;
 			}
 			
