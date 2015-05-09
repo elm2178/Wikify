@@ -15,6 +15,9 @@ public class Test {
         //creates a parser that feeds off of token buffer
         WikiParser parser = new WikiParser(tokens);
 
+        parser.removeErrorListeners();
+        parser.addErrorListener(new WikiErrorListener());
+
         //begin parsing at init rule
         ParseTree tree = parser.prog();
 

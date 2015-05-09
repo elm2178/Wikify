@@ -1,6 +1,17 @@
 import java.io.*;
+import java.util.HashMap;
 
 public class wikiToJava extends WikiBaseListener {
+
+    /* List of Different Types */
+    public static final int UNDEFINED = -1;
+    public static final int NUM = 0;
+    public static final int STR = 1;
+    public static final int PAGE= 2;
+    public static final int TABLE= 3;
+    public static final int IMAGE= 4;
+    /**************************/
+
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     PrintStream old = System.out; 
     private static int func_flag = 0;
@@ -8,6 +19,14 @@ public class wikiToJava extends WikiBaseListener {
 
     @Override
     public void enterProg(WikiParser.ProgContext ctx) {
+        try{
+            System.setOut(new PrintStream(new File("TestWiki.java")));
+            old = System.out;
+            System.out.println("import wiki.type.*;");
+        }
+        catch(Exception e) {
+            System.out.println("error translating, try running again");
+        }
     }
 
     public void enterImport_stmt(WikiParser.Import_stmtContext ctx) {
@@ -71,7 +90,6 @@ public class wikiToJava extends WikiBaseListener {
         System.out.print(buffer);
     }
 
-
     public void enterRetExpr(WikiParser.RetExprContext ctx) {
         System.out.println("return " 
                 + ctx.expr().getText() 
@@ -93,8 +111,6 @@ public class wikiToJava extends WikiBaseListener {
     }
 
 
-    //for_stmt: FOR '('stmt';'expr';'stmt')' NL stmt_seq END;
-    //for loop problems!! set for loop flag?
     public void enterFor_stmt(WikiParser.For_stmtContext ctx) {
         System.setOut(new PrintStream(stream));
     }
@@ -145,7 +161,7 @@ public class wikiToJava extends WikiBaseListener {
     }
 
     public void enterParams(WikiParser.ParamsContext ctx) {
-         String buffer = "";
+        String buffer = "";
         if(ctx.expr() != null)
             buffer += ctx.expr().getText();
 
@@ -191,10 +207,10 @@ public class wikiToJava extends WikiBaseListener {
     public void enterDecAssign(WikiParser.DecAssignContext ctx) {
         if(func_flag == 0) {
             System.out.println("static " + matchJava(ctx.type().getText())
-                + ctx.ident().getText() 
-                + " = " 
-                + ctx.expr().getText() 
-                + ";"); 
+                    + ctx.ident().getText() 
+                    + " = " 
+                    + ctx.expr().getText() 
+                    + ";"); 
             return;
         }
 
@@ -216,7 +232,7 @@ public class wikiToJava extends WikiBaseListener {
 
         System.out.println(result);
     }
-    
+
     public void enterAssign(WikiParser.AssignContext ctx) {
         System.out.println(ctx.ident().getText() 
                 + " = " 
@@ -226,17 +242,17 @@ public class wikiToJava extends WikiBaseListener {
     public void enterIncDec(WikiParser.IncDecContext ctx) {
         if(ctx.getStart() == ctx.ident()) 
             System.out.println(ctx.ident().getText() 
-                + ctx.u.getText() + ";");
+                    + ctx.u.getText() + ";");
         else
             System.out.println(ctx.u.getText() 
-                + ctx.ident().getText() + ";");
+                    + ctx.ident().getText() + ";");
 
     }
 
     public void enterStaticCall(WikiParser.StaticCallContext ctx) {
         System.out.println(ctx.static_fcall().getText() + ";");
     }
- 
+
     public void enterPrint(WikiParser.PrintContext ctx) {
         System.out.println("System.out.print("
                 + ctx.expr().getText()
@@ -253,8 +269,8 @@ public class wikiToJava extends WikiBaseListener {
             result = "int ";
         if(type.compareTo("page") == 0)
             result = "Page ";
-	if(type.compareTo("table") == 0)
-	    result = "Table ";
+        if(type.compareTo("table") == 0)
+            result = "Table ";
 
         return result;
     }
@@ -266,8 +282,8 @@ public class wikiToJava extends WikiBaseListener {
         if(open == -1) {
             if(type.compareTo("Page ") == 0)
                 return type + " " + ident + " = " + "new " + type + "();";
-	    if(type.compareTo("Table ")== 0)
-		return type + " " + ident + " = " + "new " + type + "();";
+            if(type.compareTo("Table ")== 0)
+                return type + " " + ident + " = " + "new " + type + "();";
             return type + " " + ident + ";";
         }
 
@@ -281,7 +297,7 @@ public class wikiToJava extends WikiBaseListener {
         String buffer = "";
         String id = ident.substring(0, open);
         String brackets = ident.substring(open, ident.length());
-        
+
         String decl_brackets = "";
         for(int i = 0; i < ident.length(); i++) {
             if(ident.charAt(i) == '[')

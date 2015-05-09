@@ -141,8 +141,10 @@ cond: int_expr (LT|GT|LTE|GTE|EQ|NEQ) expr;
 /* String Expressions *******/
 str_expr: STRLIT '+' str_expr       # ConcatStr
     | ident '+' str_expr            # ConcatId
+    | static_fcall '+' str_expr     # ConcatFcall
     | STRLIT                        # StrLit
     | ident                         # IdString
+    | static_fcall                  # Fcall
     ;
 /****************************/
 

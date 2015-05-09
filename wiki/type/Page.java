@@ -1,8 +1,10 @@
 import java.net.*;
 import java.io.*;
 import java.util.Arrays;
+import org.apache.poi.xwpf.usermodel.*;
 
-public class Page{
+
+public class Page extends DataType{
     private String url;
     private String[] html;
     private HtmlParser parser;
@@ -41,7 +43,8 @@ public class Page{
 
                 if(i == buffer.length)
                     buffer = Arrays.copyOf(buffer, buffer.length *2);
-
+		//remove weird wikipedia character sequence "&#160" from document
+		line=line.replace("&#160","");
                 buffer[i] = line;
                 i++;
             }
@@ -60,6 +63,7 @@ public class Page{
         return parser.getParagraphs();
     }
 
+<<<<<<< HEAD
     public String[][] getTables(){
         return parser.getTables();
     }
@@ -68,9 +72,44 @@ public class Page{
         return parser.getLinks();
     }
 	
+=======
+    
+    public void toWord(String fileName){
+        String[] paragraphs = this.getParagraphs();
+	fileName = fileName.split("\\.")[0] + ".docx";
+	File f = new File(fileName);
+	XWPFDocument doc = null;
+	 
+	if (f.isFile()) {
+	    try {doc = new XWPFDocument(new FileInputStream(fileName));}
+	    catch (Exception e) {e.printStackTrace();}
+	}
+	else {doc = new XWPFDocument();}
+	 
+	for (int i=0; i< paragraphs.length; i++){
+	    XWPFParagraph p = doc.createParagraph();
+	    XWPFRun r = p.createRun();
+	    r.setText(paragraphs[i]);
+	    r.addBreak();
+	}
+	 
+	FileOutputStream out;
+	try {
+	    out = new FileOutputStream(fileName);
+	    doc.write(out);
+	    out.close();
+	}  catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+
+>>>>>>> 1892dbf34c98a8e9019707254318d6a822b36673
     public void getInfobox(){
-	System.out.println("Looking for tables!!!");
 	parser.getInfobox();
+    }
+
+    public void getTables(){
+	parser.getTables();
     }
 
     //asks user for input --> will automatically search wiki for search terms
@@ -90,4 +129,7 @@ public class Page{
 	}
     }
 
+    public int getType() {
+        return DataType.PAGE;
+    }
 }
