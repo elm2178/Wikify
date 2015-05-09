@@ -375,4 +375,152 @@ goback:
     private boolean end(){
         return(x == page.length-1);//&&(y == page[x.length()-1].length()-1));
     }
+
+///////////////////////
+public class Matrix {
+	double[][] data;
+	public int row;
+	public int column;
+
+	public Matrix(int rows, int columns){
+
+		this.row = rows;
+		this.column = columns;
+		data = new double[rows][columns];
+	}
+	
+	//multi
+	public Matrix scM(double a){
+		Matrix M = this;
+		for(int i=0; i<row; i++){
+			for(int j=0; j<column; j++){
+				M.data[i][j] *= a;
+			}
+		}
+		return M;
+	}
+	
+	public double sta(){
+		Matrix M = this;
+		double m = 0.0; 
+		for(int i = 0; i<M.row; i++){
+			m += M.data[i][0]*M.data[i][0];
+		}
+		m = Math.pow(m, 0.5);
+		return m;
+	}
+	
+	public void swap(int i, int j){
+		Matrix M = this;
+		double[] temp = M.data[i];
+		M.data[i] = M.data[j];
+		M.data[j] = temp;
+	}
+
+	public Matrix transpose() {
+		Matrix M = new Matrix(column, row);
+		for (int i = 0; i<row; i++){
+			for (int j = 0; j<column; j++){
+				M.data[j][i] = this.data[i][j];
+			}
+		}
+		//M.printTest();
+		return M;
+	}
+
+	//A*B
+	public Matrix matrixMult(Matrix B){
+		Matrix A = this;
+		Matrix C = new Matrix(A.row, B.column);
+		for (int i = 0; i<C.row; i++)
+			for (int j = 0; j<C.column; j++)
+				for (int k = 0; k<A.column; k++)
+					C.data[i][j]+=(A.data[i][k]*B.data[k][j]);
+		//C.printTest();
+		return C;
+	}
+
+	//invert square matrix
+	public Matrix invert(){
+		Matrix A = this;
+		Matrix inverse = new Matrix(A.row, A.column);
+		for(int i = 0; i<inverse.row; i++){
+			inverse.data[i][i] = 1.0;
+		}
+		//eliminate
+		for (int i = 0; i<row; i++) {
+			int max = i;
+			for (int j=i+1; j<row; j++)
+				if (Math.abs(A.data[j][i]) > Math.abs(A.data[max][i]))
+					max = j;
+			
+			//swaps in both matrices
+			A.swap(i, max);
+			inverse.swap(i, max);
+			
+			for (int j=i+1; j<row; j++) {
+				double m = A.data[j][i] / A.data[i][i];
+				for (int k = 0; k < column; k++) {
+					A.data[j][k] -= A.data[i][k]*m;
+					inverse.data[j][k] -= inverse.data[i][k]*m;
+				}
+				A.data[j][i] = 0.0;
+			}
+		}
+		int y = A.column-1;
+		int x = A.row-1;
+		
+		while(x > 0){
+			//inverse.printTest();
+			double piv = A.data[x][y];
+			int w;
+			for(w = x-1; w >= 0; w--){
+				if(A.data[w][y] != 0){
+					break;
+				}
+			}
+			if(A.data[w][y] != 0){
+				double m = A.data[w][y] / piv;
+				A.data[w][y] = 0;
+				for(int t = A.column-1; t>=0; -- t){
+					inverse.data[w][t] -= m*inverse.data[x][t];
+				}
+			}y--;
+			x--;
+		}
+		//Make pivots 1
+		for(int k = 0; k<A.row; k++){
+			int l = 0; 
+			while(l<A.column){
+				inverse.data[k][l] = inverse.data[k][l]/A.data[k][k];
+				l++;
+			}
+			A.data[k][k] = 1;
+		}
+		
+		//return inverse matrix to caller
+		return inverse;
+	}
+
+	//tester for printing matrices
+	public void printTest(){
+		Matrix A = this;
+		for(int i = 0; i<A.row; i++){
+			for(int j = 0; j<A.column; j++){
+				System.out.print(A.data[i][j]+" ");
+			}
+			System.out.println();
+		}
+	}	
+}
+
+
+
+
+
+
+
+
+
+//////////////////
 }
