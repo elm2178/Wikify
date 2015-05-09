@@ -16,7 +16,6 @@ public class wikiToJava extends WikiBaseListener {
     PrintStream old = System.out; 
     private static int func_flag = 0;
     private static int class_flag = 0;
-    private static HashMap<String, Integer> table = new HashMap<String, Integer>();
 
     @Override
     public void enterProg(WikiParser.ProgContext ctx) {
@@ -90,7 +89,6 @@ public class wikiToJava extends WikiBaseListener {
 
         System.out.print(buffer);
     }
-
 
     public void enterRetExpr(WikiParser.RetExprContext ctx) {
         System.out.println("return " 
