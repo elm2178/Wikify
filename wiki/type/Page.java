@@ -1,4 +1,3 @@
-package wiki.type;
 import java.net.*;
 import java.io.*;
 import java.util.Arrays;
@@ -64,6 +63,16 @@ public class Page extends DataType{
         return parser.getParagraphs();
     }
 
+<<<<<<< HEAD
+    public String[][] getTables(){
+        return parser.getTables();
+    }
+
+    public String[] getLinks(){
+        return parser.getLinks();
+    }
+	
+=======
     
     public void toWord(String fileName){
         String[] paragraphs = this.getParagraphs();
@@ -94,6 +103,7 @@ public class Page extends DataType{
 	}
     }
 
+>>>>>>> 1892dbf34c98a8e9019707254318d6a822b36673
     public void getInfobox(){
 	parser.getInfobox();
     }
