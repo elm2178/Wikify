@@ -18,20 +18,20 @@ public class Test {
 	String[][] input = {{"a","b","c","f"},{"c","d","e","g"}};
 	Table table1= new Table(input);
 	table1.remove(0, 2);
-	//table1.excel("output.xlsx");
+	table1.toWord("output");
 	table1.insert("D",0, 2);
-	table1.excel("output.xlsx");
+	table1.toWord("output.xlsx");
 	//System.out.println(table1.getSize());
 	//System.out.println(table1.search("c"));
 	
 	
 	//testing getTables method(see below)
 	String url = "http://en.wikipedia.org/wiki/List_of_Presidents_of_the_United_States";
-    ArrayList<Table> tables = getTables(url);
+	ArrayList<Table> tables = getTables(url);
     for (Table table:tables){
-    	table.excel("output");
-    }
+    	table.toWord("output");
 	}
+    }
     /**
      * need import statement of Jsoup
      * @param urlAddress: of type String

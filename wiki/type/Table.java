@@ -1,8 +1,9 @@
 package wiki.type;
 import java.util.*;
-import java.io.File;
+import java.io.*;
 import jxl.*;
 import jxl.write.*;
+import org.apache.poi.xwpf.usermodel.*;
 
 public class Table extends DataType{
     private String[][] table;
@@ -125,7 +126,7 @@ public class Table extends DataType{
         System.out.println();
     }
 
-    public void excel(String fileName){
+    public void toExcel(String fileName){
         int offset = 0;
         fileName = fileName.split("\\.")[0]+".xls"; 
         WritableWorkbook workbook = null;
@@ -158,6 +159,39 @@ public class Table extends DataType{
         } 
 
     }
+
+    public void toWord(String fileName){
+	fileName = fileName.split("\\.")[0] + ".docx";
+	File f = new File(fileName);
+	XWPFDocument doc = null;
+	 
+	if (f.isFile()) {
+	    try {doc = new XWPFDocument(new FileInputStream(fileName));}
+	    catch (Exception e) {e.printStackTrace();}
+	}
+	else {doc = new XWPFDocument();}
+	
+	XWPFParagraph p = doc.createParagraph();
+	XWPFRun r = p.createRun();
+	r.addBreak();
+	XWPFTable t = doc.createTable(rows,cols);
+	for (int i=0; i<rows; i++){
+	    for (int j=0; j<cols; j++){
+		t.getRow(i).getCell(j).setText(table[i][j]);
+	    }
+	}
+	
+	FileOutputStream out;
+	try {
+	    out = new FileOutputStream(fileName);
+	    doc.write(out);
+	    out.close();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+	
+    }
+    
 
     public int getType() {
         return DataType.TABLE;
