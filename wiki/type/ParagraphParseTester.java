@@ -1,16 +1,14 @@
 import java.util.Scanner;
 
-public class ParseTester{
+public class ParagraphParseTester{
 
 	public static void main(String[] args){
 
 		String inputURL;
 		Scanner in = new Scanner(System.in);
 
-		//System.out.println("URL: ");
-		//inputURL = in.nextLine();
-
-		inputURL = "http://en.wikipedia.org/wiki/Robert_Johnson";
+		System.out.println("INPUT URL: ");
+		inputURL = in.nextLine();
 
 		Page html = new Page(inputURL);
 

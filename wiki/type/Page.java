@@ -1,4 +1,3 @@
-package wiki.type;
 import java.net.*;
 import java.io.*;
 import java.util.Arrays;
@@ -59,6 +58,14 @@ public class Page{
 
     public String[] getParagraphs() {
         return parser.getParagraphs();
+    }
+
+    public String[][] getTables(){
+        return parser.getTables();
+    }
+
+    public String[] getLinks(){
+        return parser.getLinks();
     }
 	
     public void getInfobox(){
