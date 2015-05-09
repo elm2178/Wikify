@@ -47,6 +47,7 @@ stmt: PRINT '(' expr ')'            # Print
     | comm                          # Comment
     | static_fcall                  # StaticCall
     | BRK                           # Break
+    | ret_stmt                      # Ret
     ;
 
 comm: LCOM
@@ -94,7 +95,7 @@ static_fcall: ID '.' ID '('expr')'
     ;
 
 /* Function Definition *******/
-func: FUNC (type|) ID'('args')' NL func_stmt ret_stmt END # FuncDef
+func: FUNC (type|) ID'('args')' NL func_stmt (ret_stmt|) END # FuncDef
     ;
 
 func_stmt: stmt NL func_stmt        # FuncStmt
@@ -116,7 +117,6 @@ args: type ident',' args
 
 /* Return Statements ********/
 ret_stmt: RETURN expr NL                        # RetExpr
-    | /* epsilon */                             # NoRet
     ; 
 /****************************/
 
